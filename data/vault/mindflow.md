@@ -1,11 +1,17 @@
 ---
 id: "mindflow"
 title: "MindFlow"
+title_en: "MindFlow"
+title_zh: "MindFlow"
 type: "project"
 status: "completed"
 ai_involvement: 78
 motivation: "思维脑图和散落的随笔通常是静态且孤立的，难以随着个人知识库的成长而自我进化。"
+motivation_en: "Mind maps and scattered essays are often static and isolated, making it difficult for them to evolve alongside a growing personal knowledge base."
+motivation_zh: "思维脑图和散落的随笔通常是静态且孤立的，难以随着个人知识库的成长而自我进化。"
 purpose: "将零散的思想与笔记实时转化为可视化脑图与关联结构。"
+purpose_en: "Transform scattered thoughts and notes into visual brain maps and relational structures in real time."
+purpose_zh: "将零散的思想与笔记实时转化为可视化脑图与关联结构。"
 tech_stack: ["Python", "NetworkX"]
 concepts: ["知识图谱"]
 related_nodes:

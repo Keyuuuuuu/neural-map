@@ -131,6 +131,7 @@ function run() {
         
         const metadata = parsed.data;
         const node = {
+          ...metadata,
           id: metadata.id,
           title: metadata.title || metadata.id,
           type: metadata.type || 'project',

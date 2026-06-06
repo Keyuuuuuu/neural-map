@@ -1,11 +1,17 @@
 ---
 id: "graphmind"
 title: "GraphMind"
+title_en: "GraphMind"
+title_zh: "GraphMind"
 type: "project"
 status: "completed"
 ai_involvement: 92
 motivation: "在信息爆炸的时代，构建个人知识图谱，让知识连接产生更大的价值。"
+motivation_en: "In the era of information explosion, building a personal knowledge graph allows connections to create greater value."
+motivation_zh: "在信息爆炸的时代，构建个人知识图谱，让知识连接产生更大的价值。"
 purpose: "提供一个可视化、可搜索、可进化的个人知识管理与项目探索平台。"
+purpose_en: "Provide an interactive, searchable, and evolving platform for personal knowledge management and project exploration."
+purpose_zh: "提供一个可视化、可搜索、可进化的个人知识管理与项目探索平台。"
 tech_stack: ["PyTorch", "Python", "NetworkX", "Neo4j"]
 concepts: ["知识图谱", "NLP"]
 related_nodes:

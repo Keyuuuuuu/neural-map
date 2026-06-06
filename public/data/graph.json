@@ -3,12 +3,17 @@
     {
       "id": "diffgraph",
       "title": "DiffGraph",
+      "title_en": "DiffGraph",
+      "title_zh": "DiffGraph",
       "type": "belongs_to",
       "status": "idea",
       "ai_involvement": 65,
       "motivation": "大型图谱在节点频繁增删时计算成本高昂，传统的静态重构方法缺乏实时局部演化更新的能力。",
+      "motivation_en": "Large-scale graphs incur heavy computational costs during frequent node updates; traditional static reconstruction lack the capability for real-time local updates.",
+      "motivation_zh": "大型图谱在节点频繁增删时计算成本高昂，传统的静态重构方法缺乏实时局部演化更新的能力。",
       "purpose": "探索在知识图谱的差分变化中，通过 GNN 动态更新图特征与表示。",
-      "content": "# DiffGraph\n\n图神经网络实验项目，专注于增量图结构的表示学习研究。\n\n## 特性\n\n- **增量式 GNN 更新**：避免重新计算整个图谱的 Embeddings，仅对增量/变更部分实施消息传递。\n- **时间演化分析**：捕获图谱随时间推移发生的连接强度变化。",
+      "purpose_en": "Explore dynamic update of graph features and representations via GNNs in response to differential changes in the knowledge graph.",
+      "purpose_zh": "探索在知识图谱的差分变化中，通过 GNN 动态更新图特征与表示。",
       "tech_stack": [
         "PyTorch",
         "Python"
@@ -21,17 +26,23 @@
         {
           "id": "graphmind"
         }
-      ]
+      ],
+      "content": "# DiffGraph\n\n图神经网络实验项目，专注于增量图结构的表示学习研究。\n\n## 特性\n\n- **增量式 GNN 更新**：避免重新计算整个图谱的 Embeddings，仅对增量/变更部分实施消息传递。\n- **时间演化分析**：捕获图谱随时间推移发生的连接强度变化。"
     },
     {
       "id": "graphmind",
       "title": "GraphMind",
+      "title_en": "GraphMind",
+      "title_zh": "GraphMind",
       "type": "optimize_for",
       "status": "completed",
       "ai_involvement": 92,
       "motivation": "在信息爆炸的时代，构建个人知识图谱，让知识连接产生更大的价值。",
+      "motivation_en": "In the era of information explosion, building a personal knowledge graph allows connections to create greater value.",
+      "motivation_zh": "在信息爆炸的时代，构建个人知识图谱，让知识连接产生更大的价值。",
       "purpose": "提供一个可视化、可搜索、可进化的个人知识管理与项目探索平台。",
-      "content": "# GraphMind\n\n知识图谱构建工具，是整个个人数字花园的核心大脑。\n\n## 核心功能\n\n- **动态知识摄入**：支持解析 Markdown 笔记、代码库、学术文献及网页链接。\n- **语义链接构建**：利用自然语言处理算法自动抽取实体与关系，生成结构化的图谱拓扑。\n- **高维可视化**：提供 2D/3D 力导向图，方便直观检索个人思想的关联网络。",
+      "purpose_en": "Provide an interactive, searchable, and evolving platform for personal knowledge management and project exploration.",
+      "purpose_zh": "提供一个可视化、可搜索、可进化的个人知识管理与项目探索平台。",
       "tech_stack": [
         "PyTorch",
         "Python",
@@ -46,17 +57,23 @@
         {
           "id": "graphrag"
         }
-      ]
+      ],
+      "content": "# GraphMind\n\n知识图谱构建工具，是整个个人数字花园的核心大脑。\n\n## 核心功能\n\n- **动态知识摄入**：支持解析 Markdown 笔记、代码库、学术文献及网页链接。\n- **语义链接构建**：利用自然语言处理算法自动抽取实体与关系，生成结构化的图谱拓扑。\n- **高维可视化**：提供 2D/3D 力导向图，方便直观检索个人思想的关联网络。"
     },
     {
       "id": "graphrag",
       "title": "GraphRAG",
+      "title_en": "GraphRAG",
+      "title_zh": "GraphRAG",
       "type": "belongs_to",
       "status": "in-progress",
       "ai_involvement": 90,
       "motivation": "大语言模型面对长文本推理和复杂关系多跳查询时存在幻觉，且对特定私有知识的感知十分微弱。",
+      "motivation_en": "Large language models suffer from hallucinations in long-context reasoning and complex multi-hop relation queries, with weak awareness of specific private knowledge.",
+      "motivation_zh": "大语言模型面对长文本推理和复杂关系多跳查询时存在幻觉，且对特定私有知识的感知十分微弱。",
       "purpose": "利用图谱拓扑结构进行检索增强，生成更具结构化与事实性支撑的回答。",
-      "content": "# GraphRAG\n\n基于知识图谱的检索增强生成项目，将 LLM 与结构化图形的全局/局部关系融合。\n\n## 功能\n\n- **全局社区提取**：通过 Graphmind 提取出的社区摘要进行高层次事实生成。\n- **实体感知召回**：基于密集检索和稀疏图游走，精准捕获多跳关联的上下文。",
+      "purpose_en": "Leverage knowledge graph topology structures for retrieval-augmented generation to produce highly structured and fact-supported answers.",
+      "purpose_zh": "利用图谱拓扑结构进行检索增强，生成更具结构化与事实性支撑的回答。",
       "tech_stack": [
         "Python",
         "Neo4j",
@@ -70,30 +87,42 @@
         {
           "id": "graphmind"
         }
-      ]
+      ],
+      "content": "# GraphRAG\n\n基于知识图谱的检索增强生成项目，将 LLM 与结构化图形的全局/局部关系融合。\n\n## 功能\n\n- **全局社区提取**：通过 Graphmind 提取出的社区摘要进行高层次事实生成。\n- **实体感知召回**：基于密集检索 and 稀疏图游走，精准捕获多跳关联的上下文。"
     },
     {
       "id": "知识图谱",
       "title": "知识图谱",
+      "title_en": "Knowledge Graph",
+      "title_zh": "知识图谱",
       "type": "concept",
       "status": "completed",
       "ai_involvement": 0,
       "motivation": "通过网状拓扑的实体和语义关系，将碎片化的信息升华为相互关联的知识网络。",
+      "motivation_en": "Elevate fragmented information into interconnected knowledge networks via web-like topologies of entities and semantic relations.",
+      "motivation_zh": "通过网状拓扑的实体和语义关系，将碎片化的信息升华为相互关联的知识网络。",
       "purpose": "提供统一的语义表示与检索层，为探索个人知识资产打下基础。",
-      "content": "# 知识图谱 (Knowledge Graph)\n\n结构化的语义网络，代表人类知识在机器层面的互连和映射。",
+      "purpose_en": "Provide a unified semantic representation and retrieval layer, laying foundations for exploring personal knowledge assets.",
+      "purpose_zh": "提供统一的语义表示与检索层，为探索个人知识资产打下基础。",
       "tech_stack": [],
       "concepts": [],
-      "related_nodes": []
+      "related_nodes": [],
+      "content": "# 知识图谱 (Knowledge Graph)\n\n结构化的语义网络，代表人类知识在机器层面的互连和映射。"
     },
     {
       "id": "mindflow",
       "title": "MindFlow",
+      "title_en": "MindFlow",
+      "title_zh": "MindFlow",
       "type": "belongs_to",
       "status": "completed",
       "ai_involvement": 78,
       "motivation": "思维脑图和散落的随笔通常是静态且孤立的，难以随着个人知识库的成长而自我进化。",
+      "motivation_en": "Mind maps and scattered essays are often static and isolated, making it difficult for them to evolve alongside a growing personal knowledge base.",
+      "motivation_zh": "思维脑图和散落的随笔通常是静态且孤立的，难以随着个人知识库的成长而自我进化。",
       "purpose": "将零散的思想与笔记实时转化为可视化脑图与关联结构。",
-      "content": "# MindFlow\n\n思维可视化工具，专注于辅助创作者捕获并映射灵感碎片，实现可视化笔记组织。\n\n## 特性\n\n- **实时语义映射**：书写过程中自动高亮关联关键词。\n- **力导向画布排版**：以物理引擎的排斥和吸引力模型优雅布局知识点。",
+      "purpose_en": "Transform scattered thoughts and notes into visual brain maps and relational structures in real time.",
+      "purpose_zh": "将零散的思想与笔记实时转化为可视化脑图与关联结构。",
       "tech_stack": [
         "Python",
         "NetworkX"
@@ -105,69 +134,99 @@
         {
           "id": "graphmind"
         }
-      ]
+      ],
+      "content": "# MindFlow\n\n思维可视化工具，专注于辅助创作者捕获并映射灵感碎片，实现可视化笔记组织。\n\n## 特性\n\n- **实时语义映射**：书写过程中自动高亮关联关键词。\n- **力导向画布排版**：以物理引擎的排斥和吸引力模型优雅布局知识点。"
     },
     {
       "id": "neo4j",
       "title": "Neo4j",
+      "title_en": "Neo4j",
+      "title_zh": "Neo4j",
       "type": "tech",
       "status": "completed",
       "ai_involvement": 0,
       "motivation": "高性能原生图形存储数据库，具备高可用的图遍历和 Cypher 查询处理能力。",
+      "motivation_en": "A high-performance native graph database featuring highly available graph traversal and Cypher query processing capabilities.",
+      "motivation_zh": "高性能原生图形存储数据库，具备高可用的图遍历和 Cypher 查询处理能力。",
       "purpose": "存储结构化的实体及关系数据，为下游 GraphRAG 系统提供秒级关联检索。",
-      "content": "# Neo4j\n\n工业级原生图数据库，通过高效的 Cypher 查询语言提供闪电般的关系链检索服务。",
+      "purpose_en": "Store structured entity and relationship data, providing sub-second relational retrieval for downstream GraphRAG systems.",
+      "purpose_zh": "存储结构化的实体及关系数据，为下游 GraphRAG 系统提供秒级关联检索。",
       "tech_stack": [],
       "concepts": [],
-      "related_nodes": []
+      "related_nodes": [],
+      "content": "# Neo4j\n\n工业级原生图数据库，通过高效的 Cypher 查询语言提供闪电般的关系链检索服务。"
     },
     {
       "id": "networkx",
       "title": "NetworkX",
+      "title_en": "NetworkX",
+      "title_zh": "NetworkX",
       "type": "tech",
       "status": "completed",
       "ai_involvement": 0,
       "motivation": "提供丰富的标准图算法实现，适合进行多维拓扑分析与复杂网络运算。",
+      "motivation_en": "Provide rich implementations of standard graph algorithms, ideal for multi-dimensional topology analysis and complex network computation.",
+      "motivation_zh": "提供丰富的标准图算法实现，适合进行多维拓扑分析与复杂网络运算。",
       "purpose": "用于分析个人数字花园的网状拓扑、度分布和社区中心度。",
-      "content": "# NetworkX\n\n用于创建、操作和研究复杂网络结构及图算法的 Python 第三方库。",
+      "purpose_en": "Analyze the mesh topology, degree distribution, and community centrality of the personal digital garden.",
+      "purpose_zh": "用于分析个人数字花园的网状拓扑、度分布和社区中心度。",
       "tech_stack": [],
       "concepts": [],
-      "related_nodes": []
+      "related_nodes": [],
+      "content": "# NetworkX\n\n用于创建、操作和研究复杂网络结构及图算法的 Python 第三方库。"
     },
     {
       "id": "nlp",
       "title": "NLP",
+      "title_en": "NLP",
+      "title_zh": "NLP",
       "type": "concept",
       "status": "completed",
       "ai_involvement": 0,
       "motivation": "利用计算机技术分析和表征人类语言的各类表示层级。",
+      "motivation_en": "Utilize computational techniques to analyze and represent various hierarchical levels of human language.",
+      "motivation_zh": "利用计算机技术分析和表征人类语言的各类表示层级。",
       "purpose": "提供从文本流中进行命名实体识别（NER）和语义关系抽取（RE）的理论和算法基础。",
-      "content": "# 自然语言处理 (NLP)\n\n人工智能的核心方向之一，负责在计算机和人类自然语言之间架起沟通和转译的桥梁。",
+      "purpose_en": "Provide theoretical and algorithmic foundations for Named Entity Recognition (NER) and Relation Extraction (RE) from text streams.",
+      "purpose_zh": "提供从文本流中进行命名实体识别（NER）和语义关系抽取（RE）的理论和算法基础。",
       "tech_stack": [],
       "concepts": [],
-      "related_nodes": []
+      "related_nodes": [],
+      "content": "# 自然语言处理 (NLP)\n\n人工智能的核心方向之一，负责在计算机和人类自然语言之间架起沟通和转译的桥梁。"
     },
     {
       "id": "pytorch",
       "title": "PyTorch",
+      "title_en": "PyTorch",
+      "title_zh": "PyTorch",
       "type": "tech",
       "status": "completed",
       "ai_involvement": 0,
       "motivation": "灵活、高效的开源深度学习框架，支持动态图计算，广泛应用于研究和生产环境。",
+      "motivation_en": "A flexible and efficient open-source deep learning framework supporting dynamic computation graphs, widely used in research and production.",
+      "motivation_zh": "灵活、高效的开源深度学习框架，支持动态图计算，广泛应用于研究和生产环境。",
       "purpose": "作为语义向量抽取和自定义深度神经网络的核心运行时。",
-      "content": "# PyTorch\n\n开源深度学习框架，为所有文本向量化和关系抽取模型提供高效张量计算。",
+      "purpose_en": "Serve as the core runtime for semantic vector extraction and custom deep neural networks.",
+      "purpose_zh": "作为语义向量抽取和自定义深度神经网络的核心运行时。",
       "tech_stack": [],
       "concepts": [],
-      "related_nodes": []
+      "related_nodes": [],
+      "content": "# PyTorch\n\n开源深度学习框架，为所有文本向量化和关系抽取模型提供高效张量计算。"
     },
     {
       "id": "text2kg",
       "title": "Text2KG",
+      "title_en": "Text2KG",
+      "title_zh": "Text2KG",
       "type": "belongs_to",
       "status": "completed",
       "ai_involvement": 85,
       "motivation": "非结构化文本占到所有数据源的80%以上，对其进行人工关系建模耗时且无法扩展。",
+      "motivation_en": "Unstructured text accounts for over 80% of all data sources, making manual relationship modeling time-consuming and non-scalable.",
+      "motivation_zh": "非结构化文本占到所有数据源的80%以上，对其进行人工关系建模耗时且无法扩展。",
       "purpose": "端到端地从无结构非格式化文本中提取实体、属性及语义三元组。",
-      "content": "# Text2KG\n\n实体抽取项目，作为知识图谱构建的底层基础管道，负责从非结构化文本中全自动抽取高精度实体与语义三元组。\n\n## 特性\n\n- **多模式实体识别**：基于微调的深度学习模型提取人名、机构、地名及自定义专业术语。\n- **关系分类器**：自动判断实体对之间的依赖、继承或关联强度。",
+      "purpose_en": "Extract entities, properties, and semantic triples from unstructured, unformatted text in an end-to-end manner.",
+      "purpose_zh": "端到端地从无结构非格式化文本中提取实体、属性及语义三元组。",
       "tech_stack": [
         "Python",
         "PyTorch",
@@ -181,7 +240,8 @@
         {
           "id": "graphmind"
         }
-      ]
+      ],
+      "content": "# Text2KG\n\n实体抽取项目，作为知识图谱构建的底层基础管道，负责从非结构化文本中全自动抽取高精度实体与语义三元组。\n\n## 特性\n\n- **多模式实体识别**：基于微调的深度学习模型提取人名、机构、地名及自定义专业术语。\n- **关系分类器**：自动判断实体对之间的依赖、继承或关联强度。"
     },
     {
       "id": "PyTorch",

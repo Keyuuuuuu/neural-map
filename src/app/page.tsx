@@ -33,11 +33,17 @@ import DetailSidebar from "@/components/DetailSidebar";
 interface NodeData {
   id: string;
   title: string;
+  title_en?: string;
+  title_zh?: string;
   type: "project" | "tech" | "concept";
   status: "completed" | "in-progress" | "idea" | "long-term";
   ai_involvement: number;
   motivation: string;
+  motivation_en?: string;
+  motivation_zh?: string;
   purpose: string;
+  purpose_en?: string;
+  purpose_zh?: string;
   content: string;
   tech_stack: string[];
   concepts: string[];
@@ -67,7 +73,7 @@ const ForceGraph2D = dynamic(
     loading: () => (
       <div className="graph-loading-overlay">
         <div className="spinner-icon"></div>
-        <span className="spinner-text">渲染网络拓扑结构中...</span>
+        <span className="spinner-text">Loading network topology... / 渲染网络拓扑中...</span>
       </div>
     ),
   }
@@ -285,6 +291,97 @@ export default function Home() {
   
   // Theme state
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [lang, setLang] = useState<"zh" | "en">("zh");
+
+  // UI translations mapping
+  const translations = {
+    zh: {
+      sidebarNetwork: "关系星图",
+      sidebarProjects: "项目列表",
+      sidebarTech: "技术选型",
+      sidebarConcepts: "知识概念",
+      sidebarTimeline: "构建历程",
+      sidebarAuthor: "关于作者",
+      themeLight: "切换到亮色模式",
+      themeDark: "切换到暗色模式",
+      githubRepo: "GitHub 仓库",
+      emailContact: "邮件联系",
+      headerSubtitle: "探索我的项目、技术与知识网络",
+      searchPlaceholder: "搜索项目、技术、概念...",
+      aiInvolvement: "AI Involvement / AI参与度",
+      filters: "筛选 / Filters",
+      filterByCat: "按节点类别筛选",
+      filterProjects: "项目 (Projects)",
+      filterTech: "技术栈 (Technologies)",
+      filterConcepts: "理论概念 (Concepts)",
+      filterFocusTitle: "图谱对焦选项",
+      filterFocusMode: "开启高亮聚焦模型 (Focus)",
+      filterExpandMode: "扩展至二级连线 (Expand)",
+      profileTitle: "个人主页",
+      legendTitle: "关系图例",
+      legendImplements: "实现 (implements)",
+      legendBelongsTo: "属于 (belongs_to)",
+      legendInspiredBy: "启发 (inspired_by)",
+      legendOptimizeFor: "优化 (optimize_for)",
+      toolboxFocus: "鼠标对焦模式",
+      toolboxZoomIn: "放大",
+      toolboxZoomOut: "缩小",
+      toolboxFit: "自适应缩放",
+      canvasHint: "使用滚轮缩放，拖拽背景平移",
+      statProjects: "个项目",
+      statTech: "项技术栈",
+      statConcepts: "个理论概念",
+      statRelations: "条关系",
+      actionHighlight: "高亮模式",
+      actionExpand: "二级关系",
+      actionExport: "导出图谱",
+      subtech: "技术栈",
+      subconcept: "理论概念"
+    },
+    en: {
+      sidebarNetwork: "Network Topology",
+      sidebarProjects: "Projects",
+      sidebarTech: "Tech Selection",
+      sidebarConcepts: "Concepts",
+      sidebarTimeline: "Timeline",
+      sidebarAuthor: "About Author",
+      themeLight: "Switch to Light Mode",
+      themeDark: "Switch to Dark Mode",
+      githubRepo: "GitHub Repository",
+      emailContact: "Email Contact",
+      headerSubtitle: "Explore my projects, technologies, and knowledge network",
+      searchPlaceholder: "Search projects, tech, concepts...",
+      aiInvolvement: "AI Involvement",
+      filters: "Filters",
+      filterByCat: "Filter by Category",
+      filterProjects: "Projects",
+      filterTech: "Technologies",
+      filterConcepts: "Concepts",
+      filterFocusTitle: "Graph Focus Options",
+      filterFocusMode: "Enable Focus Highlight",
+      filterExpandMode: "Expand to 2nd Degree",
+      profileTitle: "Profile",
+      legendTitle: "Legend",
+      legendImplements: "implements",
+      legendBelongsTo: "belongs to",
+      legendInspiredBy: "inspired by",
+      legendOptimizeFor: "optimizes",
+      toolboxFocus: "Focus Mode",
+      toolboxZoomIn: "Zoom In",
+      toolboxZoomOut: "Zoom Out",
+      toolboxFit: "Fit Canvas",
+      canvasHint: "Use scroll to zoom, drag background to pan",
+      statProjects: " Projects",
+      statTech: " Tech Stacks",
+      statConcepts: " Concepts",
+      statRelations: " Relations",
+      actionHighlight: "Focus Mode",
+      actionExpand: "Expand Link",
+      actionExport: "Export Graph",
+      subtech: "Tech Stack",
+      subconcept: "Concept"
+    }
+  };
   
   // Filtering & Interaction States
   const [activeSidebarTab, setActiveSidebarTab] = useState<string>("network");
@@ -390,25 +487,39 @@ export default function Home() {
     }
   }, [graphData]);
 
-  // Compute category counts for category filters (Option 2 style)
-  const categoryCounts = useMemo(() => {
-    const counts = { project: 0, tech: 0, concept: 0 };
+  // Compute stats for category filters and bottom panel dynamically
+  const nodeStats = useMemo(() => {
+    const stats = { project: 0, tech: 0, concept: 0 };
     graphData.nodes.forEach(node => {
-      if (node.type in counts) {
-        counts[node.type as keyof typeof counts]++;
+      if (node.type in stats) {
+        stats[node.type as keyof typeof stats]++;
       }
     });
-    return counts;
+    return {
+      ...stats,
+      total: graphData.nodes.length,
+      links: graphData.links.length
+    };
+  }, [graphData.nodes, graphData.links]);
+
+  // Compute average AI involvement dynamically
+  const aiAvgInvolvement = useMemo(() => {
+    const projects = graphData.nodes.filter(n => n.type === "project");
+    if (projects.length === 0) return 0;
+    const totalAi = projects.reduce((acc, curr) => acc + (curr.ai_involvement || 0), 0);
+    return Math.round(totalAi / projects.length);
   }, [graphData.nodes]);
 
-  // Compute autocomplete search dropdown results
+  // Compute autocomplete search dropdown results with bilingual support
   const searchResults = useMemo(() => {
     if (searchQuery.trim() === "") return [];
     const query = searchQuery.toLowerCase();
-    return graphData.nodes.filter(node => 
-      node.title.toLowerCase().includes(query) || 
-      node.id.toLowerCase().includes(query)
-    ).slice(0, 5);
+    return graphData.nodes.filter(node => {
+      const matchZh = node.title_zh?.toLowerCase().includes(query) || node.title.toLowerCase().includes(query);
+      const matchEn = node.title_en?.toLowerCase().includes(query);
+      const matchId = node.id.toLowerCase().includes(query);
+      return matchZh || matchEn || matchId;
+    }).slice(0, 5);
   }, [graphData.nodes, searchQuery]);
 
   // Combined Filters Logic: Tab, AI range slider, Category checkboxes (Search is handled via opacity highlighting)
@@ -538,12 +649,20 @@ export default function Home() {
     // Search Query highlighting logic (preserving layout topology)
     const matchesSearch = searchQuery.trim() === "" || 
       node.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.title_zh?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.title_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.motivation?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.motivation_zh?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.motivation_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.tech_stack?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
 
     ctx.save();
     ctx.globalAlpha = isHighlighted && matchesSearch ? 1.0 : 0.12;
+
+    const titleVal = lang === "zh" 
+      ? (node.title_zh || node.title || node.id) 
+      : (node.title_en || node.title || node.id);
 
     // 🌟 1. SPECIAL CORE CENTER NODE (GraphMind Octagon)
     if (node.id === "graphmind") {
@@ -590,11 +709,11 @@ export default function Home() {
       ctx.font = "bold 8.5px Outfit, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
-      ctx.fillText("GraphMind", node.x, node.y + 6);
+      ctx.fillText(titleVal, node.x, node.y + 6);
       
       ctx.font = "500 5.5px sans-serif";
       ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-      ctx.fillText("知识图谱构建工具", node.x, node.y + 16);
+      ctx.fillText(lang === "zh" ? "知识图谱构建工具" : "Knowledge Graph Engine", node.x, node.y + 16);
 
       // 92% AI Involvement pill
       const capW = 38;
@@ -654,16 +773,16 @@ export default function Home() {
     ctx.fillStyle = isSelected ? categoryColor : (isDarkMode ? "#f3f4f6" : "#1e293b");
     
     // Main Title
-    ctx.fillText(node.title, node.x, node.y + r + 5);
+    ctx.fillText(titleVal, node.x, node.y + r + 5);
 
     // Category / AI Involvement Subtitle
     let subtitle = "";
     if (node.type === "project") {
       subtitle = `${node.ai_involvement}% AI`;
     } else if (node.type === "tech") {
-      subtitle = "技术栈";
+      subtitle = lang === "zh" ? "技术栈" : "Tech Stack";
     } else {
-      subtitle = "理论概念";
+      subtitle = lang === "zh" ? "理论概念" : "Concept";
     }
     
     ctx.font = `500 ${fontSize * 0.8}px sans-serif`;
@@ -773,7 +892,7 @@ export default function Home() {
             className={`sidebar-link ${activeSidebarTab === "network" ? "active" : ""}`}
           >
             <Network className="sidebar-link-icon" />
-            <span>关系星图</span>
+            <span>{translations[lang].sidebarNetwork}</span>
           </a>
           <a 
             href="#" 
@@ -781,7 +900,7 @@ export default function Home() {
             className={`sidebar-link ${activeSidebarTab === "projects" ? "active" : ""}`}
           >
             <Briefcase className="sidebar-link-icon" />
-            <span>项目列表</span>
+            <span>{translations[lang].sidebarProjects}</span>
           </a>
           <a 
             href="#" 
@@ -789,7 +908,7 @@ export default function Home() {
             className={`sidebar-link ${activeSidebarTab === "technologies" ? "active" : ""}`}
           >
             <Terminal className="sidebar-link-icon" />
-            <span>技术选型</span>
+            <span>{translations[lang].sidebarTech}</span>
           </a>
           <a 
             href="#" 
@@ -797,7 +916,7 @@ export default function Home() {
             className={`sidebar-link ${activeSidebarTab === "concepts" ? "active" : ""}`}
           >
             <Cpu className="sidebar-link-icon" />
-            <span>知识概念</span>
+            <span>{translations[lang].sidebarConcepts}</span>
           </a>
           <a 
             href="#" 
@@ -805,7 +924,7 @@ export default function Home() {
             className="sidebar-link"
           >
             <Clock className="sidebar-link-icon" />
-            <span>构建历程</span>
+            <span>{translations[lang].sidebarTimeline}</span>
           </a>
           <a 
             href="#" 
@@ -813,7 +932,7 @@ export default function Home() {
             className="sidebar-link"
           >
             <User className="sidebar-link-icon" />
-            <span>关于作者</span>
+            <span>{translations[lang].sidebarAuthor}</span>
           </a>
         </nav>
 
@@ -822,23 +941,31 @@ export default function Home() {
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)} 
               className="sidebar-icon-btn"
-              title={isDarkMode ? "切换到亮色模式" : "切换到暗色模式"}
+              title={isDarkMode ? translations[lang].themeLight : translations[lang].themeDark}
             >
               {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button 
+              onClick={() => setLang(lang === "zh" ? "en" : "zh")} 
+              className="sidebar-icon-btn"
+              title={lang === "zh" ? "Switch to English" : "切换为中文"}
+              style={{ fontWeight: 600, fontSize: "0.82rem" }}
+            >
+              {lang === "zh" ? "EN" : "中"}
             </button>
             <a 
               href="https://github.com/Keyuuuuuu/neural-map" 
               target="_blank" 
               rel="noopener noreferrer"
               className="sidebar-icon-btn"
-              title="GitHub 仓库"
+              title={translations[lang].githubRepo}
             >
               <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
             </a>
             <a 
               href="mailto:contact@kenoma.me" 
               className="sidebar-icon-btn"
-              title="邮件联系"
+              title={translations[lang].emailContact}
             >
               <Mail size={18} />
             </a>
@@ -860,7 +987,7 @@ export default function Home() {
                   <h2 className="header-title-text">My Knowledge Graph</h2>
                   <Sparkles className="spark-icon" />
                 </div>
-                <span className="header-subtitle">探索我的项目、技术与知识网络</span>
+                <span className="header-subtitle">{translations[lang].headerSubtitle}</span>
               </div>
 
               {/* Top controls panel (Search, AI Range slider, Filters, Profile) */}
@@ -873,7 +1000,7 @@ export default function Home() {
                     type="text" 
                     id="global-search-input"
                     className="search-input"
-                    placeholder="Search projects, tech, concepts..." 
+                    placeholder={translations[lang].searchPlaceholder} 
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value);
@@ -906,9 +1033,13 @@ export default function Home() {
                             )}
                           </div>
                           <div className="search-dropdown-item-text">
-                            <span className="search-dropdown-item-title">{node.title}</span>
+                            <span className="search-dropdown-item-title">
+                              {lang === "zh" 
+                                ? (node.title_zh || node.title || node.id)
+                                : (node.title_en || node.title || node.id)}
+                            </span>
                             <span className="search-dropdown-item-desc">
-                              {node.type === "project" ? `${node.ai_involvement}% AI` : node.type === "tech" ? "技术栈" : "理论概念"}
+                              {node.type === "project" ? `${node.ai_involvement}% AI` : node.type === "tech" ? translations[lang].subtech : translations[lang].subconcept}
                             </span>
                           </div>
                         </div>
@@ -919,7 +1050,7 @@ export default function Home() {
 
                 {/* AI Involvement range slider */}
                 <div className="ai-slider-wrapper">
-                  <span className="ai-slider-label">AI Involvement</span>
+                  <span className="ai-slider-label">{translations[lang].aiInvolvement}</span>
                   <div className="slider-container">
                     <input 
                       type="range" 
@@ -940,7 +1071,7 @@ export default function Home() {
                     className={`btn-filter ${showFiltersDropdown ? "active" : ""}`}
                   >
                     <SlidersHorizontal size={15} />
-                    <span>Filters</span>
+                    <span>{translations[lang].filters}</span>
                     {Object.values(categoryFilters).filter(v => !v).length > 0 && (
                       <span className="filter-badge">
                         {Object.values(categoryFilters).filter(v => !v).length}
@@ -951,7 +1082,7 @@ export default function Home() {
                   {/* Fused Option 2 Filters Dropdown */}
                   {showFiltersDropdown && (
                     <div className="filters-dropdown">
-                      <span className="filters-section-title">按节点类别筛选</span>
+                      <span className="filters-section-title">{translations[lang].filterByCat}</span>
                       <div className="filters-list">
                         <label className="filter-checkbox-label">
                           <div className="filter-checkbox-left">
@@ -961,9 +1092,9 @@ export default function Home() {
                               onChange={() => setCategoryFilters({...categoryFilters, project: !categoryFilters.project})}
                             />
                             <div className="checkbox-custom"></div>
-                            <span>项目 (Projects)</span>
+                            <span>{translations[lang].filterProjects}</span>
                           </div>
-                          <span className="filter-count-badge">{categoryCounts.project}</span>
+                          <span className="filter-count-badge">{nodeStats.project}</span>
                         </label>
                         <label className="filter-checkbox-label">
                           <div className="filter-checkbox-left">
@@ -973,9 +1104,9 @@ export default function Home() {
                               onChange={() => setCategoryFilters({...categoryFilters, tech: !categoryFilters.tech})}
                             />
                             <div className="checkbox-custom"></div>
-                            <span>技术栈 (Technologies)</span>
+                            <span>{translations[lang].filterTech}</span>
                           </div>
-                          <span className="filter-count-badge">{categoryCounts.tech}</span>
+                          <span className="filter-count-badge">{nodeStats.tech}</span>
                         </label>
                         <label className="filter-checkbox-label">
                           <div className="filter-checkbox-left">
@@ -985,13 +1116,13 @@ export default function Home() {
                               onChange={() => setCategoryFilters({...categoryFilters, concept: !categoryFilters.concept})}
                             />
                             <div className="checkbox-custom"></div>
-                            <span>理论概念 (Concepts)</span>
+                            <span>{translations[lang].filterConcepts}</span>
                           </div>
-                          <span className="filter-count-badge">{categoryCounts.concept}</span>
+                          <span className="filter-count-badge">{nodeStats.concept}</span>
                         </label>
                       </div>
 
-                      <span className="filters-section-title">图谱对焦选项</span>
+                      <span className="filters-section-title">{translations[lang].filterFocusTitle}</span>
                       <div className="filters-list">
                         <label className="filter-checkbox-label">
                           <div className="filter-checkbox-left">
@@ -1001,7 +1132,7 @@ export default function Home() {
                               onChange={() => setIsFocusMode(!isFocusMode)}
                             />
                             <div className="checkbox-custom"></div>
-                            <span>开启高亮聚焦模型 (Focus)</span>
+                            <span>{translations[lang].filterFocusMode}</span>
                           </div>
                         </label>
                         <label className="filter-checkbox-label">
@@ -1012,7 +1143,7 @@ export default function Home() {
                               onChange={() => setIsExpandMode(!isExpandMode)}
                             />
                             <div className="checkbox-custom"></div>
-                            <span>扩展至二级连线 (Expand)</span>
+                            <span>{translations[lang].filterExpandMode}</span>
                           </div>
                         </label>
                       </div>
@@ -1020,7 +1151,7 @@ export default function Home() {
                   )}
                 </div>
 
-                <div className="user-avatar" title="个人主页">
+                <div className="user-avatar" title={translations[lang].profileTitle}>
                   <span>AK</span>
                 </div>
               </div>
@@ -1057,22 +1188,22 @@ export default function Home() {
 
               {/* Relationship Legend (Option 1 overlay) */}
               <div className="legend-panel">
-                <span className="legend-title">关系图例</span>
+                <span className="legend-title">{translations[lang].legendTitle}</span>
                 <div className="legend-item">
                   <div className="legend-line" style={{ backgroundColor: "var(--color-primary)" }}></div>
-                  <span>实现 (implements)</span>
+                  <span>{translations[lang].legendImplements}</span>
                 </div>
                 <div className="legend-item">
                   <div className="legend-line" style={{ border: "1px dashed var(--color-purple)", height: 0 }}></div>
-                  <span>属于 (belongs_to)</span>
+                  <span>{translations[lang].legendBelongsTo}</span>
                 </div>
                 <div className="legend-item">
                   <div className="legend-line" style={{ border: "1px dotted var(--color-green)", height: 0 }}></div>
-                  <span>启发 (inspired_by)</span>
+                  <span>{translations[lang].legendInspiredBy}</span>
                 </div>
                 <div className="legend-item">
                   <div className="legend-line" style={{ border: "1px dashed var(--color-orange)", height: 0 }}></div>
-                  <span>优化 (optimize_for)</span>
+                  <span>{translations[lang].legendOptimizeFor}</span>
                 </div>
               </div>
 
@@ -1081,28 +1212,28 @@ export default function Home() {
                 <button 
                   onClick={() => setIsFocusMode(!isFocusMode)}
                   className={`toolbox-btn ${isFocusMode ? "active" : ""}`}
-                  title="鼠标对焦模式"
+                  title={translations[lang].toolboxFocus}
                 >
                   <Sliders size={15} />
                 </button>
                 <button 
                   onClick={() => fgRef.current && fgRef.current.zoom(fgRef.current.zoom() * 1.3, 400)}
                   className="toolbox-btn"
-                  title="放大"
+                  title={translations[lang].toolboxZoomIn}
                 >
                   <span>+</span>
                 </button>
                 <button 
                   onClick={() => fgRef.current && fgRef.current.zoom(fgRef.current.zoom() / 1.3, 400)}
                   className="toolbox-btn"
-                  title="缩小"
+                  title={translations[lang].toolboxZoomOut}
                 >
                   <span>−</span>
                 </button>
                 <button 
                   onClick={handleBackgroundClick}
                   className="toolbox-btn"
-                  title="自适应缩放"
+                  title={translations[lang].toolboxFit}
                 >
                   <Maximize2 size={13} />
                 </button>
@@ -1110,7 +1241,7 @@ export default function Home() {
 
               <div className="canvas-hint">
                 <Activity size={12} style={{ marginRight: "4px", display: "inline", verticalAlign: "middle" }} /> 
-                <span>使用滚轮缩放，拖拽背景平移</span>
+                <span>{translations[lang].canvasHint}</span>
               </div>
             </div>
 
@@ -1120,28 +1251,28 @@ export default function Home() {
               {/* Stats Board Card */}
               <div className="stats-board-card">
                 <div className="stats-board-item">
-                  <span className="stats-board-num">28</span>
-                  <span className="stats-board-label">个项目</span>
+                  <span className="stats-board-num">{nodeStats.project}</span>
+                  <span className="stats-board-label">{translations[lang].statProjects}</span>
                 </div>
                 <div className="stats-board-divider"></div>
                 <div className="stats-board-item">
-                  <span className="stats-board-num">42</span>
-                  <span className="stats-board-label">项技术栈</span>
+                  <span className="stats-board-num">{nodeStats.tech}</span>
+                  <span className="stats-board-label">{translations[lang].statTech}</span>
                 </div>
                 <div className="stats-board-divider"></div>
                 <div className="stats-board-item">
-                  <span className="stats-board-num">16</span>
-                  <span className="stats-board-label">个理论概念</span>
+                  <span className="stats-board-num">{nodeStats.concept}</span>
+                  <span className="stats-board-label">{translations[lang].statConcepts}</span>
                 </div>
                 <div className="stats-board-divider"></div>
                 <div className="stats-board-item">
-                  <span className="stats-board-num">156</span>
-                  <span className="stats-board-label">条关系</span>
+                  <span className="stats-board-num">{nodeStats.links}</span>
+                  <span className="stats-board-label">{translations[lang].statRelations}</span>
                 </div>
                 <div className="stats-board-divider"></div>
                 <div className="stats-board-item sparkline-container">
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <span className="stats-board-num">71%</span>
+                    <span className="stats-board-num">{aiAvgInvolvement}%</span>
                     <span className="stats-board-label">AI Avg. Involvement</span>
                   </div>
                   
@@ -1172,21 +1303,21 @@ export default function Home() {
                   className={`btn-action ${isFocusMode ? "active" : ""}`}
                 >
                   <Focus size={14} />
-                  <span>高亮模式</span>
+                  <span>{translations[lang].actionHighlight}</span>
                 </button>
                 <button 
                   onClick={() => setIsExpandMode(!isExpandMode)}
                   className={`btn-action ${isExpandMode ? "active" : ""}`}
                 >
                   <Maximize2 size={14} />
-                  <span>二级关系</span>
+                  <span>{translations[lang].actionExpand}</span>
                 </button>
                 <button 
                   onClick={handleExportData}
                   className="btn-action"
                 >
                   <Download size={14} />
-                  <span>导出图谱</span>
+                  <span>{translations[lang].actionExport}</span>
                 </button>
               </div>
 
@@ -1200,6 +1331,7 @@ export default function Home() {
               selectedNode={selectedNode}
               onClose={() => setSelectedNode(null)}
               onSelectNodeById={handleSelectNodeById}
+              lang={lang}
             />
           </aside>
 
