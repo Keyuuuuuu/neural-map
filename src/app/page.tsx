@@ -275,11 +275,13 @@ const drawIsometricCube = (ctx: CanvasRenderingContext2D, cx: number, cy: number
 
 export default function Home() {
   const fgRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // States
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
   const [selectedNode, setSelectedNode] = useState<NodeData | null>(null);
   const [hoveredNode, setHoveredNode] = useState<NodeData | null>(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   
   // Theme state
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
@@ -287,6 +289,7 @@ export default function Home() {
   // Filtering & Interaction States
   const [activeSidebarTab, setActiveSidebarTab] = useState<string>("network");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showSearchDropdown, setShowSearchDropdown] = useState<boolean>(false);
   const [aiFilterVal, setAiFilterVal] = useState<number>(0);
   const [showFiltersDropdown, setShowFiltersDropdown] = useState<boolean>(false);
   
@@ -300,6 +303,37 @@ export default function Home() {
   // Focus & Expand states
   const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
   const [isExpandMode, setIsExpandMode] = useState<boolean>(false);
+
+  // Sync theme selection to document root so body variables update correctly
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDarkMode) {
+      root.classList.add("dark-theme");
+    } else {
+      root.classList.remove("dark-theme");
+    }
+  }, [isDarkMode]);
+
+  // Dynamically observe the ForceGraph parent container dimensions
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        setDimensions({ width, height });
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+    
+    // Zoom to fit on initial resize
+    setTimeout(() => {
+      if (fgRef.current) fgRef.current.zoomToFit(400, 80);
+    }, 100);
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   // Load Graph Data
   useEffect(() => {
@@ -367,7 +401,17 @@ export default function Home() {
     return counts;
   }, [graphData.nodes]);
 
-  // Combined Filters Logic: Tab, Search, AI range slider, Category checkboxes
+  // Compute autocomplete search dropdown results
+  const searchResults = useMemo(() => {
+    if (searchQuery.trim() === "") return [];
+    const query = searchQuery.toLowerCase();
+    return graphData.nodes.filter(node => 
+      node.title.toLowerCase().includes(query) || 
+      node.id.toLowerCase().includes(query)
+    ).slice(0, 5);
+  }, [graphData.nodes, searchQuery]);
+
+  // Combined Filters Logic: Tab, AI range slider, Category checkboxes (Search is handled via opacity highlighting)
   const filteredNodes = useMemo(() => {
     return graphData.nodes.filter((node) => {
       // 1. Sidebar tab filter
@@ -375,29 +419,19 @@ export default function Home() {
       if (activeSidebarTab === "technologies" && node.type !== "tech") return false;
       if (activeSidebarTab === "concepts" && node.type !== "concept") return false;
       
-      // 2. Search query filter
-      if (searchQuery.trim() !== "") {
-        const query = searchQuery.toLowerCase();
-        const matchesTitle = node.title.toLowerCase().includes(query);
-        const matchesId = node.id.toLowerCase().includes(query);
-        const matchesMotivation = node.motivation?.toLowerCase().includes(query) || false;
-        const matchesTech = node.tech_stack?.some(t => t.toLowerCase().includes(query)) || false;
-        if (!matchesTitle && !matchesId && !matchesMotivation && !matchesTech) return false;
-      }
-      
-      // 3. AI involvement filter (Only filters projects, keeps tech/concept nodes)
+      // 2. AI involvement filter (Only filters projects, keeps tech/concept nodes)
       if (node.type === "project" && node.ai_involvement < aiFilterVal) {
         return false;
       }
       
-      // 4. Checkbox category filters (Option 2)
+      // 3. Checkbox category filters (Option 2)
       if (!categoryFilters[node.type as keyof typeof categoryFilters]) {
         return false;
       }
       
       return true;
     });
-  }, [graphData.nodes, activeSidebarTab, searchQuery, aiFilterVal, categoryFilters]);
+  }, [graphData.nodes, activeSidebarTab, aiFilterVal, categoryFilters]);
 
   // Filter links where both endpoints are visible
   const filteredLinks = useMemo(() => {
@@ -501,8 +535,15 @@ export default function Home() {
     // Focus Mode dimming logic
     const isHighlighted = !isFocusMode || highlightedNodeIds.size === 0 || highlightedNodeIds.has(node.id);
     
+    // Search Query highlighting logic (preserving layout topology)
+    const matchesSearch = searchQuery.trim() === "" || 
+      node.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.motivation?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      node.tech_stack?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+
     ctx.save();
-    ctx.globalAlpha = isHighlighted ? 1.0 : 0.12;
+    ctx.globalAlpha = isHighlighted && matchesSearch ? 1.0 : 0.12;
 
     // 🌟 1. SPECIAL CORE CENTER NODE (GraphMind Octagon)
     if (node.id === "graphmind") {
@@ -640,7 +681,16 @@ export default function Home() {
     const isHighlighted = !isFocusMode || 
                          (highlightedNodeIds.has(sourceId) && highlightedNodeIds.has(targetId));
 
-    if (!isHighlighted) return isDarkMode ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)";
+    // Dynamic search dimming for relationships
+    const sourceNode = graphData.nodes.find(n => n.id === sourceId);
+    const targetNode = graphData.nodes.find(n => n.id === targetId);
+    const matchesSearch = searchQuery.trim() === "" || 
+      sourceId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (sourceNode && sourceNode.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      targetId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (targetNode && targetNode.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    if (!isHighlighted || !matchesSearch) return isDarkMode ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)";
 
     switch (link.type) {
       case "implements": return isDarkMode ? "rgba(59, 130, 246, 0.35)" : "rgba(37, 99, 235, 0.25)";
@@ -825,9 +875,46 @@ export default function Home() {
                     className="search-input"
                     placeholder="Search projects, tech, concepts..." 
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setShowSearchDropdown(true);
+                    }}
+                    onFocus={() => setShowSearchDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowSearchDropdown(false), 200)} // delay to allow clicks
                   />
                   <span className="search-shortcut">⌘ K</span>
+
+                  {/* Autocomplete Search Dropdown overlay (fused clean navigation) */}
+                  {showSearchDropdown && searchResults.length > 0 && (
+                    <div className="search-dropdown">
+                      {searchResults.map(node => (
+                        <div 
+                          key={node.id}
+                          className="search-dropdown-item"
+                          onClick={() => {
+                            handleSelectNodeById(node.id);
+                            setShowSearchDropdown(false);
+                          }}
+                        >
+                          <div className="search-dropdown-item-icon">
+                            {node.type === "project" ? (
+                              <Briefcase size={12} style={{ color: "var(--color-primary)" }} />
+                            ) : node.type === "tech" ? (
+                              <Terminal size={12} style={{ color: "var(--color-green)" }} />
+                            ) : (
+                              <Cpu size={12} style={{ color: "var(--color-purple)" }} />
+                            )}
+                          </div>
+                          <div className="search-dropdown-item-text">
+                            <span className="search-dropdown-item-title">{node.title}</span>
+                            <span className="search-dropdown-item-desc">
+                              {node.type === "project" ? `${node.ai_involvement}% AI` : node.type === "tech" ? "技术栈" : "理论概念"}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* AI Involvement range slider */}
@@ -940,9 +1027,11 @@ export default function Home() {
             </div>
 
             {/* Center Canvas Force Graph Panel */}
-            <div className="canvas-container">
+            <div className="canvas-container" ref={containerRef}>
               <ForceGraph2D
                 ref={fgRef}
+                width={dimensions.width}
+                height={dimensions.height}
                 graphData={{ nodes: filteredNodes, links: filteredLinks }}
                 nodeCanvasObject={drawNode}
                 nodePointerAreaPaint={(node, color, ctx) => {
