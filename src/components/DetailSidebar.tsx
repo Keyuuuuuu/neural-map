@@ -1,6 +1,15 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React from "react";
+import { 
+  Briefcase, 
+  Terminal, 
+  Cpu, 
+  ArrowRight, 
+  X, 
+  Code2, 
+  Compass 
+} from "lucide-react";
 
 interface NodeData {
   id: string;
@@ -22,334 +31,137 @@ interface DetailSidebarProps {
   onSelectNodeById: (id: string) => void;
 }
 
-// Simple regex-based markdown to HTML parser to avoid CommonJS/ESM module import issues
-function renderMarkdown(md: string): string {
-  if (!md) return "";
-
-  let html = md;
-
-  // Escape HTML entities to prevent XSS
-  html = html
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
-  // Code blocks: ```lang ... ```
-  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
-    return `<pre><code class="language-${lang}">${code.trim()}</code></pre>`;
-  });
-
-  // Inline code: `code`
-  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-  // Blockquotes: > Text
-  html = html.replace(/^&gt;\s+(.+)$/gm, "<blockquote><p>$1</p></blockquote>");
-  // Clean up nested consecutive blockquotes
-  html = html.replace(/<\/blockquote>\s*<blockquote>/g, "");
-
-  // Headers: # Title
-  html = html.replace(/^#\s+(.+)$/gm, "<h1>$1</h1>");
-  html = html.replace(/^##\s+(.+)$/gm, "<h2>$1</h2>");
-  html = html.replace(/^###\s+(.+)$/gm, "<h3>$1</h3>");
-
-  // Unordered lists: - Item or * Item
-  html = html.replace(/^\s*[-*]\s+(.+)$/gm, "<li>$1</li>");
-  // Wrap li in ul
-  html = html.replace(/(<li>[\s\S]*<\/li>)/, "<ul>$1</ul>");
-  // Fix consecutive list groups
-  html = html.replace(/<\/ul>\s*<ul>/g, "");
-
-  // File links: [text](file:///path) or [text](url)
-  // Convert them to open-in-new-tab links or simple span if local
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) => {
-    if (url.startsWith("file://") || url.startsWith("/")) {
-      return `<a href="#" data-node-link="${text}">${text}</a>`;
-    }
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text} ↗</a>`;
-  });
-
-  // Paragraphs (double newlines)
-  // Split by double newlines, wrap in <p> if not already inside block block elements
-  const blocks = html.split(/\n\n+/);
-  html = blocks
-    .map((block) => {
-      block = block.trim();
-      if (!block) return "";
-      if (
-        block.startsWith("<h") ||
-        block.startsWith("<pre") ||
-        block.startsWith("<ul") ||
-        block.startsWith("<ol") ||
-        block.startsWith("<blockquote")
-      ) {
-        return block;
-      }
-      // Replace single newlines with breaks
-      return `<p>${block.replace(/\n/g, "<br />")}</p>`;
-    })
-    .join("\n");
-
-  return html;
-}
-
 export default function DetailSidebar({
   selectedNode,
   onClose,
   onSelectNodeById,
 }: DetailSidebarProps) {
-  const isOpen = !!selectedNode;
-  const [, startTransition] = useTransition();
-
-  const handleNodeLinkClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    if (target.tagName === "A" && target.getAttribute("data-node-link")) {
-      e.preventDefault();
-      const nodeName = target.getAttribute("data-node-link");
-      if (nodeName) {
-        // Find if this node exists by matching title or ID
-        startTransition(() => {
-          onSelectNodeById(nodeName);
-        });
-      }
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "var(--color-completed)";
-      case "in-progress":
-        return "var(--color-inprogress)";
-      case "idea":
-        return "var(--color-idea)";
-      case "long-term":
-        return "var(--color-longterm)";
-      default:
-        return "var(--color-text-muted)";
-    }
-  };
-
   const getStatusText = (status: string) => {
     switch (status) {
-      case "completed":
-        return "已完成";
-      case "in-progress":
-        return "开发中";
-      case "idea":
-        return "构想中";
-      case "long-term":
-        return "长期维护";
-      default:
-        return "未知";
+      case "completed": return "Completed";
+      case "in-progress": return "In Progress";
+      case "idea": return "Conceptual";
+      default: return status;
     }
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "project":
-        return "var(--color-project)";
-      case "tech":
-        return "var(--color-tech)";
-      case "concept":
-        return "var(--color-concept)";
-      default:
-        return "#fff";
+  const getScopeText = (node: NodeData) => {
+    if (node.type === "project") {
+      // Custom mapping based on project ID for perfect image reproduction
+      if (node.id === "knowledge-graph-toolkit") {
+        return "Data Ingestion • Graph Construction • Retrieval • Visualization";
+      }
+      if (node.id === "ai-research-assistant") {
+        return "Literature Mining • Semantic Indexing • Agent Search";
+      }
+      if (node.id === "doc2kg-pipeline") {
+        return "PDF Parsing • Layout Segmentation • Schema Mapping";
+      }
+      if (node.id === "markdown-parser") {
+        return "Obsidian Indexing • AST Parsing • High-Speed IO";
+      }
+      return "Development • Integration • Verification";
     }
-  };
-
-  const getTypeText = (type: string) => {
-    switch (type) {
-      case "project":
-        return "项目";
-      case "tech":
-        return "技术";
-      case "concept":
-        return "理论概念";
-      default:
-        return "未知";
+    if (node.type === "tech") {
+      return "Core Technology Stack • Implementation Library";
     }
+    return "Theoretical Domain • Knowledge Domain";
   };
 
   return (
-    <div
-      className="glass-panel"
-      style={{
-        ...styles.sidebar,
-        transform: isOpen ? "translateX(0)" : "translateX(calc(100% + 40px))",
-      }}
-    >
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <span style={styles.headerTitle}>SELECTED PROJECT</span>
+        {selectedNode && (
+          <button onClick={onClose} style={styles.closeBtn}>
+            <X size={16} />
+          </button>
+        )}
+      </div>
+
       {selectedNode ? (
-        <div style={styles.scrollContainer}>
-          {/* Header */}
-          <div style={styles.header}>
-            <div style={styles.typeRow}>
-              <span
-                style={{
-                  ...styles.typeBadge,
-                  color: getTypeColor(selectedNode.type),
-                  borderColor: getTypeColor(selectedNode.type),
-                }}
-              >
-                {getTypeText(selectedNode.type)}
-              </span>
-              <span style={styles.idLabel}>{selectedNode.id}</span>
-              <button onClick={onClose} style={styles.closeBtn}>
-                ✕
-              </button>
+        <div className="glass-card" style={styles.card}>
+          {/* Card Title Row */}
+          <div style={styles.titleRow}>
+            <div style={styles.iconBox}>
+              {selectedNode.type === "project" ? (
+                <Briefcase size={18} />
+              ) : selectedNode.type === "tech" ? (
+                <Terminal size={18} />
+              ) : (
+                <Cpu size={18} />
+              )}
             </div>
-            <h2 style={styles.nodeTitle}>{selectedNode.title}</h2>
-          </div>
-
-          <hr style={styles.divider} />
-
-          {/* Quick Indicators (Status & AI Involvement) */}
-          <div style={styles.indicatorRow}>
-            {selectedNode.type === "project" && (
-              <div style={styles.indicatorItem}>
-                <span style={styles.indicatorLabel}>研发状态</span>
-                <span
-                  style={{
-                    ...styles.statusBadge,
-                    backgroundColor: `${getStatusColor(selectedNode.status)}15`,
-                    color: getStatusColor(selectedNode.status),
-                    borderColor: `${getStatusColor(selectedNode.status)}30`,
-                  }}
-                >
-                  <span
-                    style={{
-                      ...styles.statusDot,
-                      backgroundColor: getStatusColor(selectedNode.status),
-                      boxShadow: `0 0 8px ${getStatusColor(selectedNode.status)}`,
-                    }}
-                  />
+            <div style={styles.titleTextContainer}>
+              <h3 style={styles.nodeTitle}>{selectedNode.title}</h3>
+              {selectedNode.type === "project" && (
+                <span style={styles.statusBadge}>
                   {getStatusText(selectedNode.status)}
                 </span>
-              </div>
-            )}
-
-            <div style={styles.indicatorItem}>
-              <span style={styles.indicatorLabel}>AI 协作比例</span>
-              <div style={styles.progressContainer}>
-                <span style={{ ...styles.progressText, color: getTypeColor(selectedNode.type) }}>
-                  {selectedNode.ai_involvement}%
-                </span>
-                <div style={styles.progressBarBg}>
-                  <div
-                    style={{
-                      ...styles.progressBarFill,
-                      width: `${selectedNode.ai_involvement}%`,
-                      backgroundColor: getTypeColor(selectedNode.type),
-                      boxShadow: `0 0 10px ${getTypeColor(selectedNode.type)}`,
-                    }}
-                  />
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
-          {/* Motivation & Purpose */}
-          {selectedNode.motivation && (
-            <div style={styles.blockSection}>
-              <h3 style={styles.sectionTitle}>设计初衷 / Motivation</h3>
-              <blockquote
-                style={{
-                  ...styles.motivationBlock,
-                  borderLeftColor: getTypeColor(selectedNode.type),
-                }}
-              >
-                <p>“ {selectedNode.motivation} ”</p>
-              </blockquote>
-            </div>
-          )}
+          {/* Description */}
+          <p style={styles.description}>
+            {selectedNode.motivation || selectedNode.purpose || "No description provided."}
+          </p>
 
-          {selectedNode.purpose && (
-            <div style={styles.blockSection}>
-              <h3 style={styles.sectionTitle}>核心目的 / Purpose</h3>
-              <div style={styles.purposeBlock}>{selectedNode.purpose}</div>
-            </div>
-          )}
-
-          {/* Tech Stack & Concepts */}
+          {/* Technologies Section */}
           {selectedNode.tech_stack && selectedNode.tech_stack.length > 0 && (
-            <div style={styles.tagSection}>
-              <h3 style={styles.sectionTitle}>使用技术栈</h3>
+            <div style={styles.section}>
+              <span style={styles.sectionLabel}>TECHNOLOGIES</span>
               <div style={styles.tagContainer}>
                 {selectedNode.tech_stack.map((tech) => (
                   <button
                     key={tech}
                     onClick={() => onSelectNodeById(tech)}
-                    style={{ ...styles.tag, color: "var(--color-tech)", borderColor: "rgba(16, 185, 129, 0.2)" }}
+                    style={styles.techPill}
                   >
-                    #{tech}
+                    {tech}
                   </button>
                 ))}
               </div>
             </div>
           )}
 
-          {selectedNode.concepts && selectedNode.concepts.length > 0 && (
-            <div style={styles.tagSection}>
-              <h3 style={styles.sectionTitle}>涉及概念领域</h3>
-              <div style={styles.tagContainer}>
-                {selectedNode.concepts.map((concept) => (
-                  <button
-                    key={concept}
-                    onClick={() => onSelectNodeById(concept)}
-                    style={{ ...styles.tag, color: "var(--color-concept)", borderColor: "rgba(168, 85, 247, 0.2)" }}
-                  >
-                    @{concept}
-                  </button>
-                ))}
-              </div>
+          {/* AI Involvement Section */}
+          <div style={styles.section}>
+            <div style={styles.progressHeader}>
+              <span style={styles.sectionLabel}>AI INVOLVEMENT</span>
+              <span style={styles.progressPercent}>{selectedNode.ai_involvement}%</span>
             </div>
-          )}
-
-          {/* Related Nodes */}
-          {selectedNode.related_nodes && selectedNode.related_nodes.length > 0 && (
-            <div style={styles.tagSection}>
-              <h3 style={styles.sectionTitle}>关联神经索引</h3>
-              <div style={styles.relationContainer}>
-                {selectedNode.related_nodes.map((rel) => (
-                  <div
-                    key={rel.id}
-                    onClick={() => onSelectNodeById(rel.id)}
-                    style={styles.relationCard}
-                  >
-                    <span style={styles.relationName}>{rel.id}</span>
-                    <span style={styles.relationType}>
-                      {rel.type === "inspired_by"
-                        ? "启发"
-                        : rel.type === "optimize_for"
-                        ? "衍生优化"
-                        : rel.type}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <hr style={styles.divider} />
-
-          {/* Markdown Content */}
-          {selectedNode.content && (
-            <div style={styles.contentSection}>
-              <h3 style={styles.sectionTitle}>开发日志 / 详情文档</h3>
+            <div style={styles.progressBarBg}>
               <div
-                className="markdown-content"
-                onClick={handleNodeLinkClick}
-                dangerouslySetInnerHTML={{
-                  __html: renderMarkdown(selectedNode.content),
+                style={{
+                  ...styles.progressBarFill,
+                  width: `${selectedNode.ai_involvement}%`,
                 }}
               />
             </div>
+          </div>
+
+          {/* Scope Section */}
+          <div style={styles.section}>
+            <span style={styles.sectionLabel}>SCOPE</span>
+            <span style={styles.scopeText}>{getScopeText(selectedNode)}</span>
+          </div>
+
+          {/* Action Link */}
+          {selectedNode.type === "project" && (
+            <a href="#" onClick={(e) => { e.preventDefault(); }} style={styles.actionLink}>
+              View Project <ArrowRight size={14} style={{ marginLeft: "4px" }} />
+            </a>
           )}
         </div>
       ) : (
         <div style={styles.emptyState}>
-          <div style={styles.emptyIcon}>🧠</div>
-          <h3>技术神经网络中枢</h3>
-          <p>请点击左侧图谱中的任意节点，查看该技术资产的设计初衷、协作配比以及在整个系统中的拓扑脉络。</p>
+          <div style={styles.emptyIconWrapper}>
+            <Compass size={24} style={{ animation: "spin 12s linear infinite" }} />
+          </div>
+          <p style={styles.emptyText}>
+            Select a project or technology node from the atlas to view its detailed specifications and scope.
+          </p>
         </div>
       )}
     </div>
@@ -357,228 +169,177 @@ export default function DetailSidebar({
 }
 
 const styles: Record<string, React.CSSProperties> = {
-  sidebar: {
-    position: "absolute",
-    right: "20px",
-    top: "20px",
-    bottom: "20px",
-    width: "420px",
-    zIndex: 10,
-    overflow: "hidden",
-    pointerEvents: "auto",
-  },
-  scrollContainer: {
-    width: "100%",
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
     height: "100%",
+  },
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingRight: "8px",
+  },
+  headerTitle: {
+    fontSize: "0.75rem",
+    fontWeight: "600",
+    color: "#3b82f6",
+    letterSpacing: "1px",
+    textTransform: "uppercase",
+  },
+  closeBtn: {
+    background: "none",
+    border: "none",
+    color: "#9ca3af",
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    transition: "color 0.2s",
+  },
+  card: {
     padding: "24px",
-    overflowY: "auto",
+    borderColor: "rgba(59, 130, 246, 0.25)",
+    boxShadow: "0 0 25px rgba(59, 130, 246, 0.08)",
     display: "flex",
     flexDirection: "column",
     gap: "20px",
   },
-  header: {
+  titleRow: {
     display: "flex",
-    flexDirection: "column",
-    gap: "8px",
+    gap: "14px",
+    alignItems: "flex-start",
   },
-  typeRow: {
+  iconBox: {
+    width: "36px",
+    height: "36px",
+    borderRadius: "8px",
     display: "flex",
     alignItems: "center",
-    gap: "8px",
-    position: "relative",
+    justifyContent: "center",
+    background: "rgba(59, 130, 246, 0.12)",
+    color: "#3b82f6",
+    border: "1px solid rgba(59, 130, 246, 0.25)",
+    flexShrink: 0,
+    boxShadow: "0 0 10px rgba(59, 130, 246, 0.15)",
   },
-  typeBadge: {
-    fontSize: "0.7rem",
-    fontWeight: "700",
-    textTransform: "uppercase",
-    padding: "2px 6px",
-    borderRadius: "4px",
-    border: "1px solid currentColor",
-    letterSpacing: "1px",
-  },
-  idLabel: {
-    fontFamily: "var(--font-mono)",
-    fontSize: "0.75rem",
-    color: "var(--color-text-muted)",
-  },
-  closeBtn: {
-    position: "absolute",
-    right: "0",
-    top: "-5px",
-    background: "none",
-    border: "none",
-    color: "var(--color-text-secondary)",
-    cursor: "pointer",
-    fontSize: "1.2rem",
-    padding: "4px",
-    transition: "color 0.2s",
-  },
-  nodeTitle: {
-    fontSize: "1.6rem",
-    fontWeight: "700",
-    color: "#fff",
-    marginTop: "4px",
-    lineHeight: "1.2",
-  },
-  divider: {
-    border: "none",
-    height: "1px",
-    backgroundColor: "var(--border-glass)",
-  },
-  indicatorRow: {
-    display: "flex",
-    gap: "16px",
-    justifyContent: "space-between",
-  },
-  indicatorItem: {
-    flex: 1,
+  titleTextContainer: {
     display: "flex",
     flexDirection: "column",
-    gap: "6px",
+    gap: "4px",
   },
-  indicatorLabel: {
-    fontSize: "0.75rem",
-    color: "var(--color-text-muted)",
+  nodeTitle: {
+    fontSize: "1.05rem",
+    fontWeight: "700",
+    color: "#fff",
+    lineHeight: "1.3",
+  },
+  statusBadge: {
+    fontSize: "0.65rem",
+    color: "#9ca3af",
     textTransform: "uppercase",
     letterSpacing: "0.5px",
   },
-  statusBadge: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "6px",
-    fontSize: "0.8rem",
-    fontWeight: "600",
-    padding: "4px 10px",
-    borderRadius: "20px",
-    border: "1px solid transparent",
-    width: "fit-content",
-  },
-  statusDot: {
-    width: "6px",
-    height: "6px",
-    borderRadius: "50%",
-  },
-  progressContainer: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-  },
-  progressText: {
-    fontFamily: "var(--font-mono)",
+  description: {
     fontSize: "0.85rem",
-    fontWeight: "700",
+    color: "#9ca3af",
+    lineHeight: "1.5",
   },
-  progressBarBg: {
-    flex: 1,
-    height: "6px",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: "3px",
-    overflow: "hidden",
-  },
-  progressBarFill: {
-    height: "100%",
-    borderRadius: "3px",
-    transition: "width 0.5s ease-out",
-  },
-  blockSection: {
+  section: {
     display: "flex",
     flexDirection: "column",
     gap: "8px",
   },
-  sectionTitle: {
-    fontSize: "0.8rem",
-    fontWeight: "700",
-    color: "var(--color-text-primary)",
+  sectionLabel: {
+    fontSize: "0.7rem",
+    fontWeight: "600",
+    color: "#6b7280",
+    letterSpacing: "0.5px",
     textTransform: "uppercase",
-    letterSpacing: "1px",
-  },
-  motivationBlock: {
-    padding: "12px 16px",
-    background: "rgba(255, 255, 255, 0.02)",
-    borderRadius: "0 12px 12px 0",
-    fontStyle: "italic",
-    color: "var(--color-text-secondary)",
-    fontSize: "0.9rem",
-    lineHeight: "1.5",
-    borderLeftWidth: "4px",
-    borderLeftStyle: "solid",
-  },
-  purposeBlock: {
-    padding: "14px",
-    background: "rgba(255, 255, 255, 0.03)",
-    borderRadius: "8px",
-    border: "1px solid var(--border-glass)",
-    fontSize: "0.9rem",
-    color: "var(--color-text-secondary)",
-    lineHeight: "1.5",
-  },
-  tagSection: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
   },
   tagContainer: {
     display: "flex",
     flexWrap: "wrap",
-    gap: "8px",
+    gap: "6px",
   },
-  tag: {
-    background: "rgba(255, 255, 255, 0.02)",
-    border: "1px solid transparent",
+  techPill: {
+    background: "rgba(255, 255, 255, 0.025)",
+    border: "1px solid rgba(255, 255, 255, 0.05)",
     borderRadius: "6px",
-    padding: "6px 12px",
-    fontSize: "0.8rem",
+    padding: "4px 8px",
+    fontSize: "0.75rem",
+    color: "#d1d5db",
     cursor: "pointer",
     transition: "all 0.2s",
-    fontFamily: "var(--font-mono)",
+    fontFamily: "var(--font-sans)",
   },
-  relationContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-  relationCard: {
+  progressHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "10px 14px",
-    borderRadius: "8px",
-    border: "1px solid var(--border-glass)",
-    background: "rgba(255, 255, 255, 0.01)",
-    cursor: "pointer",
-    transition: "all 0.2s",
   },
-  relationName: {
-    fontSize: "0.85rem",
-    color: "var(--color-text-primary)",
+  progressPercent: {
+    fontSize: "0.8rem",
+    color: "#3b82f6",
+    fontWeight: "700",
+    fontFamily: "var(--font-mono)",
+  },
+  progressBarBg: {
+    width: "100%",
+    height: "4px",
+    backgroundColor: "rgba(255, 255, 255, 0.04)",
+    borderRadius: "2px",
+    overflow: "hidden",
+  },
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: "#3b82f6",
+    boxShadow: "0 0 8px #3b82f6",
+    borderRadius: "2px",
+    transition: "width 0.4s ease-out",
+  },
+  scopeText: {
+    fontSize: "0.78rem",
+    color: "#9ca3af",
+    lineHeight: "1.4",
+  },
+  actionLink: {
+    fontSize: "0.82rem",
+    color: "#3b82f6",
+    textDecoration: "none",
     fontWeight: "600",
-  },
-  relationType: {
-    fontSize: "0.75rem",
-    color: "var(--color-text-muted)",
-    background: "rgba(255, 255, 255, 0.05)",
-    padding: "2px 6px",
-    borderRadius: "4px",
-  },
-  contentSection: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
+    display: "inline-flex",
+    alignItems: "center",
+    transition: "color 0.2s",
+    marginTop: "4px",
+    alignSelf: "flex-start",
   },
   emptyState: {
+    border: "1px dashed var(--border-glass)",
+    borderRadius: "16px",
     height: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    padding: "40px",
+    padding: "30px",
     textAlign: "center",
-    color: "var(--color-text-secondary)",
     gap: "12px",
   },
-  emptyIcon: {
-    fontSize: "3rem",
-    filter: "drop-shadow(0 0 15px rgba(255, 255, 255, 0.1))",
-    animation: "float 4s ease-in-out infinite",
+  emptyIconWrapper: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "50%",
+    background: "rgba(255, 255, 255, 0.02)",
+    border: "1px solid var(--border-glass)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#6b7280",
+  },
+  emptyText: {
+    fontSize: "0.8rem",
+    color: "#6b7280",
+    lineHeight: "1.5",
   },
 };
