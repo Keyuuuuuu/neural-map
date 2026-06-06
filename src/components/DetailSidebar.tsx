@@ -1,14 +1,17 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { 
   Briefcase, 
   Terminal, 
   Cpu, 
   ArrowRight, 
   X, 
-  Code2, 
-  Compass 
+  Compass, 
+  Sparkles,
+  Link2,
+  BookOpen,
+  Layers
 } from "lucide-react";
 
 interface NodeData {
@@ -36,310 +39,266 @@ export default function DetailSidebar({
   onClose,
   onSelectNodeById,
 }: DetailSidebarProps) {
+  const [activeTab, setActiveTab] = useState<"info" | "tech" | "links">("info");
+
   const getStatusText = (status: string) => {
     switch (status) {
-      case "completed": return "Completed";
-      case "in-progress": return "In Progress";
-      case "idea": return "Conceptual";
+      case "completed": return "已完成";
+      case "in-progress": return "开发中";
+      case "idea": return "规划中";
       default: return status;
     }
   };
 
-  const getScopeText = (node: NodeData) => {
-    if (node.type === "project") {
-      // Custom mapping based on project ID for perfect image reproduction
-      if (node.id === "knowledge-graph-toolkit") {
-        return "Data Ingestion • Graph Construction • Retrieval • Visualization";
-      }
-      if (node.id === "ai-research-assistant") {
-        return "Literature Mining • Semantic Indexing • Agent Search";
-      }
-      if (node.id === "doc2kg-pipeline") {
-        return "PDF Parsing • Layout Segmentation • Schema Mapping";
-      }
-      if (node.id === "markdown-parser") {
-        return "Obsidian Indexing • AST Parsing • High-Speed IO";
-      }
-      return "Development • Integration • Verification";
+  const getCategoryText = (type: string) => {
+    switch (type) {
+      case "project": return "项目";
+      case "tech": return "技术栈";
+      case "concept": return "理论概念";
+      default: return type;
     }
-    if (node.type === "tech") {
-      return "Core Technology Stack • Implementation Library";
+  };
+
+  const getRelationTypeText = (type: string) => {
+    switch (type) {
+      case "implements": return "实现";
+      case "belongs_to": return "归属";
+      case "inspired_by": return "启发";
+      case "optimize_for": return "优化";
+      default: return type;
     }
-    return "Theoretical Domain • Knowledge Domain";
+  };
+
+  const getRelationClass = (type: string) => {
+    switch (type) {
+      case "implements": return "type-implements";
+      case "belongs_to": return "type-belongs_to";
+      case "inspired_by": return "type-inspired_by";
+      case "optimize_for": return "type-optimize_for";
+      default: return "";
+    }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <span style={styles.headerTitle}>SELECTED PROJECT</span>
-        {selectedNode && (
-          <button onClick={onClose} style={styles.closeBtn}>
-            <X size={16} />
-          </button>
-        )}
-      </div>
-
+    <div className="detail-sidebar">
       {selectedNode ? (
-        <div className="glass-card" style={styles.card}>
-          {/* Card Title Row */}
-          <div style={styles.titleRow}>
-            <div style={styles.iconBox}>
+        <div className="detail-card">
+          {/* Header row */}
+          <div className="detail-header">
+            <span className="detail-header-tag">
+              {getCategoryText(selectedNode.type)}
+            </span>
+            <button onClick={onClose} className="btn-close-detail" title="关闭面板">
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Title block */}
+          <div className="detail-title-section">
+            <div className="detail-icon-circle">
               {selectedNode.type === "project" ? (
-                <Briefcase size={18} />
+                <Briefcase size={20} style={{ color: "var(--color-primary)" }} />
               ) : selectedNode.type === "tech" ? (
-                <Terminal size={18} />
+                <Terminal size={20} style={{ color: "var(--color-green)" }} />
               ) : (
-                <Cpu size={18} />
+                <Cpu size={20} style={{ color: "var(--color-purple)" }} />
               )}
             </div>
-            <div style={styles.titleTextContainer}>
-              <h3 style={styles.nodeTitle}>{selectedNode.title}</h3>
+            <div className="detail-title-col">
+              <h3 className="detail-node-name">{selectedNode.title}</h3>
               {selectedNode.type === "project" && (
-                <span style={styles.statusBadge}>
-                  {getStatusText(selectedNode.status)}
+                <span className="detail-node-desc">
+                  状态: {getStatusText(selectedNode.status)}
                 </span>
               )}
+              {selectedNode.type === "concept" && (
+                <span className="detail-node-desc">核心理论领域</span>
+              )}
+              {selectedNode.type === "tech" && (
+                <span className="detail-node-desc">底层开发技术栈</span>
+              )}
             </div>
           </div>
 
-          {/* Description */}
-          <p style={styles.description}>
-            {selectedNode.motivation || selectedNode.purpose || "No description provided."}
-          </p>
+          {/* Sidebar Navigation Tabs (Fusion Option 2) */}
+          <div className="detail-tabs">
+            <button 
+              onClick={() => setActiveTab("info")} 
+              className={`detail-tab-btn ${activeTab === "info" ? "active" : ""}`}
+            >
+              概览
+            </button>
+            <button 
+              onClick={() => setActiveTab("tech")} 
+              className={`detail-tab-btn ${activeTab === "tech" ? "active" : ""}`}
+            >
+              技术与概念
+            </button>
+            <button 
+              onClick={() => setActiveTab("links")} 
+              className={`detail-tab-btn ${activeTab === "links" ? "active" : ""}`}
+            >
+              拓扑连接
+            </button>
+          </div>
 
-          {/* Technologies Section */}
-          {selectedNode.tech_stack && selectedNode.tech_stack.length > 0 && (
-            <div style={styles.section}>
-              <span style={styles.sectionLabel}>TECHNOLOGIES</span>
-              <div style={styles.tagContainer}>
-                {selectedNode.tech_stack.map((tech) => (
-                  <button
-                    key={tech}
-                    onClick={() => onSelectNodeById(tech)}
-                    style={styles.techPill}
-                  >
-                    {tech}
-                  </button>
-                ))}
-              </div>
+          {/* Tab Content Panes */}
+          {activeTab === "info" && (
+            <div className="detail-tab-pane">
+              {/* Motivation */}
+              {selectedNode.motivation && (
+                <div className="detail-section">
+                  <span className="detail-section-title">设计动机 / Motivation</span>
+                  <div className="detail-motivation-box">
+                    “ {selectedNode.motivation} ”
+                  </div>
+                </div>
+              )}
+
+              {/* Purpose */}
+              {selectedNode.purpose && (
+                <div className="detail-section">
+                  <span className="detail-section-title">核心目的 / Purpose</span>
+                  <p className="detail-purpose-text">
+                    {selectedNode.purpose}
+                  </p>
+                </div>
+              )}
+
+              {/* AI Involvement */}
+              {selectedNode.type === "project" && (
+                <div className="detail-section">
+                  <div className="ai-progress-row">
+                    <span className="detail-section-title">AI 参与度 / AI Involvement</span>
+                    <span className="ai-progress-pct">{selectedNode.ai_involvement}%</span>
+                  </div>
+                  <div className="ai-progress-bar-bg">
+                    <div 
+                      className="ai-progress-bar-fill"
+                      style={{ width: `${selectedNode.ai_involvement}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Description Body */}
+              {selectedNode.content && (
+                <div className="detail-section">
+                  <span className="detail-section-title">详细描述 / Description</span>
+                  <p className="detail-purpose-text" style={{ whiteSpace: "pre-line", fontSize: "0.82rem", color: "var(--text-secondary)" }}>
+                    {selectedNode.content.replace(/^# .*\n+/g, '')}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* AI Involvement Section */}
-          <div style={styles.section}>
-            <div style={styles.progressHeader}>
-              <span style={styles.sectionLabel}>AI INVOLVEMENT</span>
-              <span style={styles.progressPercent}>{selectedNode.ai_involvement}%</span>
-            </div>
-            <div style={styles.progressBarBg}>
-              <div
-                style={{
-                  ...styles.progressBarFill,
-                  width: `${selectedNode.ai_involvement}%`,
-                }}
-              />
-            </div>
-          </div>
+          {activeTab === "tech" && (
+            <div className="detail-tab-pane">
+              {/* Associated Tech Stack */}
+              {selectedNode.tech_stack && selectedNode.tech_stack.length > 0 ? (
+                <div className="detail-section">
+                  <span className="detail-section-title">关联技术栈 / Tech Stack</span>
+                  <div className="tech-badges-grid">
+                    {selectedNode.tech_stack.map((tech) => (
+                      <div 
+                        key={tech} 
+                        onClick={() => onSelectNodeById(tech)}
+                        className="tech-badge-card"
+                      >
+                        <div className="tech-badge-icon">
+                          <Terminal size={14} style={{ color: "var(--color-green)" }} />
+                        </div>
+                        <span className="tech-badge-label">{tech}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="detail-section">
+                  <span className="detail-section-title">关联技术栈 / Tech Stack</span>
+                  <p className="detail-purpose-text" style={{ fontSize: "0.82rem" }}>此节点本身属于技术栈或无关联的技术栈组件。</p>
+                </div>
+              )}
 
-          {/* Scope Section */}
-          <div style={styles.section}>
-            <span style={styles.sectionLabel}>SCOPE</span>
-            <span style={styles.scopeText}>{getScopeText(selectedNode)}</span>
-          </div>
-
-          {/* Action Link */}
-          {selectedNode.type === "project" && (
-            <a href="#" onClick={(e) => { e.preventDefault(); }} style={styles.actionLink}>
-              View Project <ArrowRight size={14} style={{ marginLeft: "4px" }} />
-            </a>
+              {/* Associated Concepts */}
+              {selectedNode.concepts && selectedNode.concepts.length > 0 && (
+                <div className="detail-section">
+                  <span className="detail-section-title">涉及理论概念 / Concepts</span>
+                  <div className="tech-badges-grid">
+                    {selectedNode.concepts.map((concept) => (
+                      <div 
+                        key={concept} 
+                        onClick={() => onSelectNodeById(concept)}
+                        className="tech-badge-card"
+                        style={{ borderColor: "var(--color-purple-border)" }}
+                      >
+                        <div className="tech-badge-icon">
+                          <Cpu size={14} style={{ color: "var(--color-purple)" }} />
+                        </div>
+                        <span className="tech-badge-label" style={{ color: "var(--text-primary)" }}>{concept}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
+
+          {activeTab === "links" && (
+            <div className="detail-tab-pane">
+              {/* Topology Relationships */}
+              {selectedNode.related_nodes && selectedNode.related_nodes.length > 0 ? (
+                <div className="detail-section">
+                  <span className="detail-section-title">拓扑关联节点 / Related Nodes</span>
+                  <div className="related-links-list">
+                    {selectedNode.related_nodes.map((rel) => (
+                      <div 
+                        key={rel.id} 
+                        onClick={() => onSelectNodeById(rel.id)}
+                        className="related-link-item"
+                      >
+                        <div className="related-link-left">
+                          <span className="related-link-name">{rel.id}</span>
+                          <span className={`related-link-type-badge ${getRelationClass(rel.type)}`}>
+                            {getRelationTypeText(rel.type)}
+                          </span>
+                        </div>
+                        <ArrowRight className="related-link-arrow" size={14} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="detail-section">
+                  <span className="detail-section-title">拓扑关联节点 / Related Nodes</span>
+                  <p className="detail-purpose-text" style={{ fontSize: "0.82rem" }}>此节点目前无特定方向的向外拓扑关系。</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Action button */}
+          <button 
+            onClick={() => onSelectNodeById(selectedNode.id)}
+            className="btn-primary-detail"
+          >
+            <span>聚焦探索节点</span>
+            <ArrowRight size={16} />
+          </button>
         </div>
       ) : (
-        <div style={styles.emptyState}>
-          <div style={styles.emptyIconWrapper}>
-            <Compass size={24} style={{ animation: "spin 12s linear infinite" }} />
+        <div className="detail-card" style={{ padding: 0 }}>
+          <div className="empty-detail-state">
+            <div className="empty-detail-icon-box">
+              <Compass size={24} style={{ animation: "spin 12s linear infinite" }} />
+            </div>
+            <p className="empty-detail-text">
+              在星图网络中点击任意项目、技术栈或理论节点，即可在此处查看其设计动机、AI参与度以及多跳关联 spec。
+            </p>
           </div>
-          <p style={styles.emptyText}>
-            Select a project or technology node from the atlas to view its detailed specifications and scope.
-          </p>
         </div>
       )}
     </div>
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-    height: "100%",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingRight: "8px",
-  },
-  headerTitle: {
-    fontSize: "0.75rem",
-    fontWeight: "600",
-    color: "#3b82f6",
-    letterSpacing: "1px",
-    textTransform: "uppercase",
-  },
-  closeBtn: {
-    background: "none",
-    border: "none",
-    color: "#9ca3af",
-    cursor: "pointer",
-    display: "flex",
-    alignItems: "center",
-    transition: "color 0.2s",
-  },
-  card: {
-    padding: "24px",
-    borderColor: "rgba(59, 130, 246, 0.25)",
-    boxShadow: "0 0 25px rgba(59, 130, 246, 0.08)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-  },
-  titleRow: {
-    display: "flex",
-    gap: "14px",
-    alignItems: "flex-start",
-  },
-  iconBox: {
-    width: "36px",
-    height: "36px",
-    borderRadius: "8px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "rgba(59, 130, 246, 0.12)",
-    color: "#3b82f6",
-    border: "1px solid rgba(59, 130, 246, 0.25)",
-    flexShrink: 0,
-    boxShadow: "0 0 10px rgba(59, 130, 246, 0.15)",
-  },
-  titleTextContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
-  },
-  nodeTitle: {
-    fontSize: "1.05rem",
-    fontWeight: "700",
-    color: "#fff",
-    lineHeight: "1.3",
-  },
-  statusBadge: {
-    fontSize: "0.65rem",
-    color: "#9ca3af",
-    textTransform: "uppercase",
-    letterSpacing: "0.5px",
-  },
-  description: {
-    fontSize: "0.85rem",
-    color: "#9ca3af",
-    lineHeight: "1.5",
-  },
-  section: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-  sectionLabel: {
-    fontSize: "0.7rem",
-    fontWeight: "600",
-    color: "#6b7280",
-    letterSpacing: "0.5px",
-    textTransform: "uppercase",
-  },
-  tagContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "6px",
-  },
-  techPill: {
-    background: "rgba(255, 255, 255, 0.025)",
-    border: "1px solid rgba(255, 255, 255, 0.05)",
-    borderRadius: "6px",
-    padding: "4px 8px",
-    fontSize: "0.75rem",
-    color: "#d1d5db",
-    cursor: "pointer",
-    transition: "all 0.2s",
-    fontFamily: "var(--font-sans)",
-  },
-  progressHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  progressPercent: {
-    fontSize: "0.8rem",
-    color: "#3b82f6",
-    fontWeight: "700",
-    fontFamily: "var(--font-mono)",
-  },
-  progressBarBg: {
-    width: "100%",
-    height: "4px",
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
-    borderRadius: "2px",
-    overflow: "hidden",
-  },
-  progressBarFill: {
-    height: "100%",
-    backgroundColor: "#3b82f6",
-    boxShadow: "0 0 8px #3b82f6",
-    borderRadius: "2px",
-    transition: "width 0.4s ease-out",
-  },
-  scopeText: {
-    fontSize: "0.78rem",
-    color: "#9ca3af",
-    lineHeight: "1.4",
-  },
-  actionLink: {
-    fontSize: "0.82rem",
-    color: "#3b82f6",
-    textDecoration: "none",
-    fontWeight: "600",
-    display: "inline-flex",
-    alignItems: "center",
-    transition: "color 0.2s",
-    marginTop: "4px",
-    alignSelf: "flex-start",
-  },
-  emptyState: {
-    border: "1px dashed var(--border-glass)",
-    borderRadius: "16px",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "30px",
-    textAlign: "center",
-    gap: "12px",
-  },
-  emptyIconWrapper: {
-    width: "48px",
-    height: "48px",
-    borderRadius: "50%",
-    background: "rgba(255, 255, 255, 0.02)",
-    border: "1px solid var(--border-glass)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#6b7280",
-  },
-  emptyText: {
-    fontSize: "0.8rem",
-    color: "#6b7280",
-    lineHeight: "1.5",
-  },
-};

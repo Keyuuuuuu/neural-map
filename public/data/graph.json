@@ -1,120 +1,187 @@
 {
   "nodes": [
     {
-      "id": "ai-research-assistant",
-      "title": "AI Research Assistant",
-      "type": "inspired_by",
-      "status": "in-progress",
-      "ai_involvement": 90,
-      "motivation": "Researchers spend hours reading papers and extracting cross-domain methodologies without automation.",
-      "purpose": "An assistant to automate scholarly literature research workflows and cross-reference research methodologies.",
-      "content": "# AI Research Assistant\n\nAn intelligent workflow agent designed to monitor scientific preprints (arXiv/bioRxiv), parse research papers, extract methodologies, and dynamically link them into a personal knowledge vault.\n\n## Capabilities\n\n- **Automatic Citation Parsing**: Crawls bibliographical structures and resolves DOI metadata.\n- **Methodology Cross-Referencing**: Employs sentence transformers to map related theorems and algorithms.\n- **Conversational Synthesis**: Incorporates LLMs to answer domain-specific research questions.",
+      "id": "diffgraph",
+      "title": "DiffGraph",
+      "type": "belongs_to",
+      "status": "idea",
+      "ai_involvement": 65,
+      "motivation": "大型图谱在节点频繁增删时计算成本高昂，传统的静态重构方法缺乏实时局部演化更新的能力。",
+      "purpose": "探索在知识图谱的差分变化中，通过 GNN 动态更新图特征与表示。",
+      "content": "# DiffGraph\n\n图神经网络实验项目，专注于增量图结构的表示学习研究。\n\n## 特性\n\n- **增量式 GNN 更新**：避免重新计算整个图谱的 Embeddings，仅对增量/变更部分实施消息传递。\n- **时间演化分析**：捕获图谱随时间推移发生的连接强度变化。",
       "tech_stack": [
-        "Python",
         "PyTorch",
-        "NLP",
-        "Docker"
+        "Python"
       ],
       "concepts": [
-        "LLM-Integration",
-        "Semantic-Retrieval"
+        "知识图谱",
+        "NLP"
       ],
       "related_nodes": [
         {
-          "id": "knowledge-graph-toolkit"
+          "id": "graphmind"
         }
       ]
     },
     {
-      "id": "doc2kg-pipeline",
-      "title": "Doc2KG Pipeline",
+      "id": "graphmind",
+      "title": "GraphMind",
       "type": "optimize_for",
       "status": "completed",
-      "ai_involvement": 75,
-      "motivation": "Static text documents represent an unstructured format where structural connections remain hidden.",
-      "purpose": "A pipeline to parse files, extract tabular and text metadata, and construct standard graphs.",
-      "content": "# Doc2KG Pipeline\n\nA modular document parsing pipeline designed to ingest complex multi-page PDFs, docx, and HTML pages, normalize their structural layouts, and feed them into entity extraction engines.\n\n## Features\n\n- **Structural Layout Parsing**: Separates headers, tables, images, and text bodies.\n- **YAML Schema Definitions**: Standardizes intermediate parsing formats.\n- **Markdown Conversion**: Integrates with markdown parsers to construct clean markdown trees.",
+      "ai_involvement": 92,
+      "motivation": "在信息爆炸的时代，构建个人知识图谱，让知识连接产生更大的价值。",
+      "purpose": "提供一个可视化、可搜索、可进化的个人知识管理与项目探索平台。",
+      "content": "# GraphMind\n\n知识图谱构建工具，是整个个人数字花园的核心大脑。\n\n## 核心功能\n\n- **动态知识摄入**：支持解析 Markdown 笔记、代码库、学术文献及网页链接。\n- **语义链接构建**：利用自然语言处理算法自动抽取实体与关系，生成结构化的图谱拓扑。\n- **高维可视化**：提供 2D/3D 力导向图，方便直观检索个人思想的关联网络。",
       "tech_stack": [
-        "NLP",
-        "Python",
-        "YAML",
-        "Markdown-Parser"
-      ],
-      "concepts": [
-        "Information-Retrieval",
-        "Semantic-Retrieval"
-      ],
-      "related_nodes": [
-        {
-          "id": "knowledge-graph-toolkit"
-        }
-      ]
-    },
-    {
-      "id": "knowledge-graph-toolkit",
-      "title": "Knowledge Graph Construction Toolkit",
-      "type": "optimize_for",
-      "status": "completed",
-      "ai_involvement": 85,
-      "motivation": "Heterogeneous data sources contain vast amounts of dark knowledge that are disconnected and hard to query systematically.",
-      "purpose": "A toolkit for constructing, analyzing, and visualizing knowledge graphs from heterogeneous data sources.",
-      "content": "# Knowledge Graph Construction Toolkit\n\nThis featured toolkit provides an automated, end-to-end pipeline to ingest unstructured documents and database schema, extract entities and semantic relations, and construct a queryable knowledge graph.\n\n## Features\n\n- **Entity & Relation Extraction**: Utilizes fine-tuned `PyTorch` NER models and `NLP` libraries to extract highly accurate semantic triples.\n- **High-Performance Vector Storage**: Connects directly with `FAISS` to store node and edge embeddings for semantic similarity search.\n- **Graph Topology Analysis**: Employs `NetworkX` to run page-rank, centrality, and community detection algorithms over the generated networks.",
-      "tech_stack": [
+        "PyTorch",
         "Python",
         "NetworkX",
-        "FAISS",
-        "NLP",
-        "PyTorch",
-        "YAML",
-        "GitHub"
+        "Neo4j"
       ],
       "concepts": [
-        "Graph-Theory",
-        "Semantic-Retrieval",
-        "Information-Retrieval",
-        "RAG-Framework",
-        "LLM-Integration"
+        "知识图谱",
+        "NLP"
       ],
       "related_nodes": [
         {
-          "id": "ai-research-assistant"
+          "id": "graphrag"
         }
       ]
     },
     {
-      "id": "markdown-parser",
-      "title": "Markdown Parser",
-      "type": "inspired_by",
-      "status": "completed",
-      "ai_involvement": 95,
-      "motivation": "Parsing markdown files rapidly is crucial for high-speed indexing in local Obsidian vault graph builders.",
-      "purpose": "A high-performance parser designed to convert markdown to abstract syntax trees and extract link graphs.",
-      "content": "# Markdown Parser\n\nA zero-dependency, compiled parser designed to inspect raw Markdown markdown, parse YAML frontmatter configurations, and build abstract syntax trees (AST) in milliseconds.\n\n## Performance\n\n- Processes over 1500 Markdown files per second.\n- Extract link mappings (`[[Link]]` syntax) and frontmatter structures with zero external requirements.",
+      "id": "graphrag",
+      "title": "GraphRAG",
+      "type": "belongs_to",
+      "status": "in-progress",
+      "ai_involvement": 90,
+      "motivation": "大语言模型面对长文本推理和复杂关系多跳查询时存在幻觉，且对特定私有知识的感知十分微弱。",
+      "purpose": "利用图谱拓扑结构进行检索增强，生成更具结构化与事实性支撑的回答。",
+      "content": "# GraphRAG\n\n基于知识图谱的检索增强生成项目，将 LLM 与结构化图形的全局/局部关系融合。\n\n## 功能\n\n- **全局社区提取**：通过 Graphmind 提取出的社区摘要进行高层次事实生成。\n- **实体感知召回**：基于密集检索和稀疏图游走，精准捕获多跳关联的上下文。",
       "tech_stack": [
         "Python",
-        "YAML"
+        "Neo4j",
+        "PyTorch"
       ],
       "concepts": [
-        "Data-Engineering"
+        "知识图谱",
+        "NLP"
       ],
       "related_nodes": [
         {
-          "id": "doc2kg-pipeline"
+          "id": "graphmind"
         }
       ]
     },
     {
-      "id": "Python",
-      "title": "Python",
-      "type": "tech",
+      "id": "知识图谱",
+      "title": "知识图谱",
+      "type": "concept",
       "status": "completed",
       "ai_involvement": 0,
-      "motivation": "技术栈组件: Python",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 Python 技术栈的自动生成描述。可在本地 Vault 创建 `Python.md` 自定义此节点。",
+      "motivation": "通过网状拓扑的实体和语义关系，将碎片化的信息升华为相互关联的知识网络。",
+      "purpose": "提供统一的语义表示与检索层，为探索个人知识资产打下基础。",
+      "content": "# 知识图谱 (Knowledge Graph)\n\n结构化的语义网络，代表人类知识在机器层面的互连和映射。",
       "tech_stack": [],
       "concepts": [],
       "related_nodes": []
+    },
+    {
+      "id": "mindflow",
+      "title": "MindFlow",
+      "type": "belongs_to",
+      "status": "completed",
+      "ai_involvement": 78,
+      "motivation": "思维脑图和散落的随笔通常是静态且孤立的，难以随着个人知识库的成长而自我进化。",
+      "purpose": "将零散的思想与笔记实时转化为可视化脑图与关联结构。",
+      "content": "# MindFlow\n\n思维可视化工具，专注于辅助创作者捕获并映射灵感碎片，实现可视化笔记组织。\n\n## 特性\n\n- **实时语义映射**：书写过程中自动高亮关联关键词。\n- **力导向画布排版**：以物理引擎的排斥和吸引力模型优雅布局知识点。",
+      "tech_stack": [
+        "Python",
+        "NetworkX"
+      ],
+      "concepts": [
+        "知识图谱"
+      ],
+      "related_nodes": [
+        {
+          "id": "graphmind"
+        }
+      ]
+    },
+    {
+      "id": "neo4j",
+      "title": "Neo4j",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "高性能原生图形存储数据库，具备高可用的图遍历和 Cypher 查询处理能力。",
+      "purpose": "存储结构化的实体及关系数据，为下游 GraphRAG 系统提供秒级关联检索。",
+      "content": "# Neo4j\n\n工业级原生图数据库，通过高效的 Cypher 查询语言提供闪电般的关系链检索服务。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "networkx",
+      "title": "NetworkX",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "提供丰富的标准图算法实现，适合进行多维拓扑分析与复杂网络运算。",
+      "purpose": "用于分析个人数字花园的网状拓扑、度分布和社区中心度。",
+      "content": "# NetworkX\n\n用于创建、操作和研究复杂网络结构及图算法的 Python 第三方库。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "nlp",
+      "title": "NLP",
+      "type": "concept",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "利用计算机技术分析和表征人类语言的各类表示层级。",
+      "purpose": "提供从文本流中进行命名实体识别（NER）和语义关系抽取（RE）的理论和算法基础。",
+      "content": "# 自然语言处理 (NLP)\n\n人工智能的核心方向之一，负责在计算机和人类自然语言之间架起沟通和转译的桥梁。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "pytorch",
+      "title": "PyTorch",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "灵活、高效的开源深度学习框架，支持动态图计算，广泛应用于研究和生产环境。",
+      "purpose": "作为语义向量抽取和自定义深度神经网络的核心运行时。",
+      "content": "# PyTorch\n\n开源深度学习框架，为所有文本向量化和关系抽取模型提供高效张量计算。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "text2kg",
+      "title": "Text2KG",
+      "type": "belongs_to",
+      "status": "completed",
+      "ai_involvement": 85,
+      "motivation": "非结构化文本占到所有数据源的80%以上，对其进行人工关系建模耗时且无法扩展。",
+      "purpose": "端到端地从无结构非格式化文本中提取实体、属性及语义三元组。",
+      "content": "# Text2KG\n\n实体抽取项目，作为知识图谱构建的底层基础管道，负责从非结构化文本中全自动抽取高精度实体与语义三元组。\n\n## 特性\n\n- **多模式实体识别**：基于微调的深度学习模型提取人名、机构、地名及自定义专业术语。\n- **关系分类器**：自动判断实体对之间的依赖、继承或关联强度。",
+      "tech_stack": [
+        "Python",
+        "PyTorch",
+        "NLP"
+      ],
+      "concepts": [
+        "知识图谱",
+        "NLP"
+      ],
+      "related_nodes": [
+        {
+          "id": "graphmind"
+        }
+      ]
     },
     {
       "id": "PyTorch",
@@ -130,92 +197,27 @@
       "related_nodes": []
     },
     {
+      "id": "Python",
+      "title": "Python",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: Python",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 Python 技术栈的自动生成描述。可在本地 Vault 创建 `Python.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
       "id": "NLP",
       "title": "NLP",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: NLP",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 NLP 技术栈的自动生成描述。可在本地 Vault 创建 `NLP.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "Docker",
-      "title": "Docker",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: Docker",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 Docker 技术栈的自动生成描述。可在本地 Vault 创建 `Docker.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "LLM-Integration",
-      "title": "LLM-Integration",
       "type": "concept",
       "status": "completed",
       "ai_involvement": 0,
-      "motivation": "理论概念领域: LLM-Integration",
+      "motivation": "理论概念领域: NLP",
       "purpose": "指导项目设计与技术选型的宏观理论基础。",
-      "content": "关于 LLM-Integration 概念领域的自动生成描述。可在本地 Vault 创建 `LLM-Integration.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "Semantic-Retrieval",
-      "title": "Semantic-Retrieval",
-      "type": "concept",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "理论概念领域: Semantic-Retrieval",
-      "purpose": "指导项目设计与技术选型的宏观理论基础。",
-      "content": "关于 Semantic-Retrieval 概念领域的自动生成描述。可在本地 Vault 创建 `Semantic-Retrieval.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "YAML",
-      "title": "YAML",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: YAML",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 YAML 技术栈的自动生成描述。可在本地 Vault 创建 `YAML.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "Markdown-Parser",
-      "title": "Markdown-Parser",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: Markdown-Parser",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 Markdown-Parser 技术栈的自动生成描述。可在本地 Vault 创建 `Markdown-Parser.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "Information-Retrieval",
-      "title": "Information-Retrieval",
-      "type": "concept",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "理论概念领域: Information-Retrieval",
-      "purpose": "指导项目设计与技术选型的宏观理论基础。",
-      "content": "关于 Information-Retrieval 概念领域的自动生成描述。可在本地 Vault 创建 `Information-Retrieval.md` 自定义此节点。",
+      "content": "关于 NLP 概念领域的自动生成描述。可在本地 Vault 创建 `NLP.md` 自定义此节点。",
       "tech_stack": [],
       "concepts": [],
       "related_nodes": []
@@ -234,66 +236,14 @@
       "related_nodes": []
     },
     {
-      "id": "FAISS",
-      "title": "FAISS",
+      "id": "Neo4j",
+      "title": "Neo4j",
       "type": "tech",
       "status": "completed",
       "ai_involvement": 0,
-      "motivation": "技术栈组件: FAISS",
+      "motivation": "技术栈组件: Neo4j",
       "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 FAISS 技术栈的自动生成描述。可在本地 Vault 创建 `FAISS.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "GitHub",
-      "title": "GitHub",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: GitHub",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 GitHub 技术栈的自动生成描述。可在本地 Vault 创建 `GitHub.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "Graph-Theory",
-      "title": "Graph-Theory",
-      "type": "concept",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "理论概念领域: Graph-Theory",
-      "purpose": "指导项目设计与技术选型的宏观理论基础。",
-      "content": "关于 Graph-Theory 概念领域的自动生成描述。可在本地 Vault 创建 `Graph-Theory.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "RAG-Framework",
-      "title": "RAG-Framework",
-      "type": "concept",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "理论概念领域: RAG-Framework",
-      "purpose": "指导项目设计与技术选型的宏观理论基础。",
-      "content": "关于 RAG-Framework 概念领域的自动生成描述。可在本地 Vault 创建 `RAG-Framework.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "Data-Engineering",
-      "title": "Data-Engineering",
-      "type": "concept",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "理论概念领域: Data-Engineering",
-      "purpose": "指导项目设计与技术选型的宏观理论基础。",
-      "content": "关于 Data-Engineering 概念领域的自动生成描述。可在本地 Vault 创建 `Data-Engineering.md` 自定义此节点。",
+      "content": "关于 Neo4j 技术栈的自动生成描述。可在本地 Vault 创建 `Neo4j.md` 自定义此节点。",
       "tech_stack": [],
       "concepts": [],
       "related_nodes": []
@@ -301,158 +251,143 @@
   ],
   "links": [
     {
-      "source": "ai-research-assistant",
-      "target": "Python",
-      "type": "implements"
-    },
-    {
-      "source": "ai-research-assistant",
+      "source": "diffgraph",
       "target": "PyTorch",
       "type": "implements"
     },
     {
-      "source": "ai-research-assistant",
-      "target": "NLP",
-      "type": "implements"
-    },
-    {
-      "source": "ai-research-assistant",
-      "target": "Docker",
-      "type": "implements"
-    },
-    {
-      "source": "ai-research-assistant",
-      "target": "LLM-Integration",
-      "type": "belongs_to"
-    },
-    {
-      "source": "ai-research-assistant",
-      "target": "Semantic-Retrieval",
-      "type": "belongs_to"
-    },
-    {
-      "source": "ai-research-assistant",
-      "target": "knowledge-graph-toolkit",
-      "type": "inspired_by"
-    },
-    {
-      "source": "doc2kg-pipeline",
-      "target": "NLP",
-      "type": "implements"
-    },
-    {
-      "source": "doc2kg-pipeline",
+      "source": "diffgraph",
       "target": "Python",
       "type": "implements"
     },
     {
-      "source": "doc2kg-pipeline",
-      "target": "YAML",
-      "type": "implements"
-    },
-    {
-      "source": "doc2kg-pipeline",
-      "target": "Markdown-Parser",
-      "type": "implements"
-    },
-    {
-      "source": "doc2kg-pipeline",
-      "target": "Information-Retrieval",
+      "source": "diffgraph",
+      "target": "知识图谱",
       "type": "belongs_to"
     },
     {
-      "source": "doc2kg-pipeline",
-      "target": "Semantic-Retrieval",
+      "source": "diffgraph",
+      "target": "NLP",
       "type": "belongs_to"
     },
     {
-      "source": "doc2kg-pipeline",
-      "target": "knowledge-graph-toolkit",
+      "source": "diffgraph",
+      "target": "graphmind",
       "type": "inspired_by"
     },
     {
-      "source": "knowledge-graph-toolkit",
+      "source": "graphmind",
+      "target": "PyTorch",
+      "type": "implements"
+    },
+    {
+      "source": "graphmind",
       "target": "Python",
       "type": "implements"
     },
     {
-      "source": "knowledge-graph-toolkit",
+      "source": "graphmind",
       "target": "NetworkX",
       "type": "implements"
     },
     {
-      "source": "knowledge-graph-toolkit",
-      "target": "FAISS",
+      "source": "graphmind",
+      "target": "Neo4j",
       "type": "implements"
     },
     {
-      "source": "knowledge-graph-toolkit",
+      "source": "graphmind",
+      "target": "知识图谱",
+      "type": "belongs_to"
+    },
+    {
+      "source": "graphmind",
       "target": "NLP",
-      "type": "implements"
-    },
-    {
-      "source": "knowledge-graph-toolkit",
-      "target": "PyTorch",
-      "type": "implements"
-    },
-    {
-      "source": "knowledge-graph-toolkit",
-      "target": "YAML",
-      "type": "implements"
-    },
-    {
-      "source": "knowledge-graph-toolkit",
-      "target": "GitHub",
-      "type": "implements"
-    },
-    {
-      "source": "knowledge-graph-toolkit",
-      "target": "Graph-Theory",
       "type": "belongs_to"
     },
     {
-      "source": "knowledge-graph-toolkit",
-      "target": "Semantic-Retrieval",
-      "type": "belongs_to"
-    },
-    {
-      "source": "knowledge-graph-toolkit",
-      "target": "Information-Retrieval",
-      "type": "belongs_to"
-    },
-    {
-      "source": "knowledge-graph-toolkit",
-      "target": "RAG-Framework",
-      "type": "belongs_to"
-    },
-    {
-      "source": "knowledge-graph-toolkit",
-      "target": "LLM-Integration",
-      "type": "belongs_to"
-    },
-    {
-      "source": "knowledge-graph-toolkit",
-      "target": "ai-research-assistant",
+      "source": "graphmind",
+      "target": "graphrag",
       "type": "inspired_by"
     },
     {
-      "source": "markdown-parser",
+      "source": "graphrag",
       "target": "Python",
       "type": "implements"
     },
     {
-      "source": "markdown-parser",
-      "target": "YAML",
+      "source": "graphrag",
+      "target": "Neo4j",
       "type": "implements"
     },
     {
-      "source": "markdown-parser",
-      "target": "Data-Engineering",
+      "source": "graphrag",
+      "target": "PyTorch",
+      "type": "implements"
+    },
+    {
+      "source": "graphrag",
+      "target": "知识图谱",
       "type": "belongs_to"
     },
     {
-      "source": "markdown-parser",
-      "target": "doc2kg-pipeline",
+      "source": "graphrag",
+      "target": "NLP",
+      "type": "belongs_to"
+    },
+    {
+      "source": "graphrag",
+      "target": "graphmind",
+      "type": "inspired_by"
+    },
+    {
+      "source": "mindflow",
+      "target": "Python",
+      "type": "implements"
+    },
+    {
+      "source": "mindflow",
+      "target": "NetworkX",
+      "type": "implements"
+    },
+    {
+      "source": "mindflow",
+      "target": "知识图谱",
+      "type": "belongs_to"
+    },
+    {
+      "source": "mindflow",
+      "target": "graphmind",
+      "type": "inspired_by"
+    },
+    {
+      "source": "text2kg",
+      "target": "Python",
+      "type": "implements"
+    },
+    {
+      "source": "text2kg",
+      "target": "PyTorch",
+      "type": "implements"
+    },
+    {
+      "source": "text2kg",
+      "target": "NLP",
+      "type": "implements"
+    },
+    {
+      "source": "text2kg",
+      "target": "知识图谱",
+      "type": "belongs_to"
+    },
+    {
+      "source": "text2kg",
+      "target": "NLP",
+      "type": "belongs_to"
+    },
+    {
+      "source": "text2kg",
+      "target": "graphmind",
       "type": "inspired_by"
     }
   ]
