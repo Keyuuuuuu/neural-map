@@ -1,0 +1,17 @@
+{
+  "local": [
+    "./data/vault"
+  ],
+  "github": [
+    {
+      "owner": "creative-developer",
+      "repo": "speech-emotion-recognition",
+      "path": "README.md"
+    },
+    {
+      "owner": "creative-developer",
+      "repo": "english-learning-assistant",
+      "path": "README.md"
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "nodes": [
+    {
+      "id": "english-learning-assistant",
+      "title": "AI 英语口语学习助手",
+      "type": "optimize_for",
+      "status": "in-progress",
+      "ai_involvement": 90,
+      "motivation": "传统口语软件缺乏即时且富有情感的互动反馈，导致学习者难以坚持且发音纠错不精准。",
+      "purpose": "结合实时语音情感识别（SER）与生成式大模型，构建一个沉浸式、具备高同理心反馈的智能口语私教。",
+      "content": "# AI 英语口语学习助手\n\n这是一款由大语言模型与实时语音分析技术驱动的英语口语陪练助手。通过流式语音传输与即时发音评估算法，为英语学习者提供像真人外教一样的对话体验。\n\n## 关键功能\n\n- **同理心对话**：借助底层情感识别模块（由 [Speech Emotion Recognition](file:///data/vault/speech-emotion-recognition.md) 驱动），实时感知用户的焦虑、自信或挫败感，动态调整 AI 助手的语气和鼓励策略。\n- **发音精确纠错**：利用音素级对齐算法（G2P），对用户的发音进行精细化评估，指出元音饱满度、重音及连读问题。\n- **极客全栈架构**：前端采用 `Next.js` 提供高响应度的音频录制与实时波形动画，后端采用 Python 高速中转。\n\n## 研发进度\n\n- [x] 流式 WebRTC 音频收发链路\n- [/] 基于音素比对的口语纠错算法微调\n- [ ] 情感反馈对话链路闭环",
+      "tech_stack": [
+        "Python",
+        "PyTorch",
+        "Next.js"
+      ],
+      "concepts": [
+        "NLP",
+        "Deep-Learning"
+      ],
+      "related_nodes": [
+        {
+          "id": "speech-emotion-recognition"
+        }
+      ]
+    },
+    {
+      "id": "neural-map",
+      "title": "NexusMind: 个人神经索引网",
+      "type": "inspired_by",
+      "status": "in-progress",
+      "ai_involvement": 95,
+      "motivation": "在 AI 辅助开发的时代，大量的代码生成导致开发者产生‘知识漂浮感’与记忆断层，传统的树状笔记无法还原网状思维。",
+      "purpose": "通过自动化抓取分布式 Git 库元数据，渲染高可视化的 2D 拓扑图谱，重塑个人技术资产的组织结构。",
+      "content": "# NexusMind: 个人神经索引网\n\n本系统是我们的集中式构建与渲染中枢。它基于 Next.js（App Router）架构，在构建期间利用 Node.js 提取各分布式项目的元数据，并在前端绘制高动态、极具科幻质感的神经网图谱。\n\n## 架构特色\n\n- **零本地冗余**：支持直接通过 GitHub API 获取各子项目的 README frontmatter，主页只作逻辑编织与展示。\n- **2D 力导向引擎**：基于 `react-force-graph-2d` 深度定制玻璃拟态节点和流光连线。\n- **高维过滤器**：支持按技术标签、概念主题、AI 参与度等多个维度动态过滤网络。\n\n## 待办事项\n\n- [x] 系统架构与数据协议规范制定\n- [/] Next.js 基础骨架搭建与 Force-graph 组件集成\n- [ ] Vercel 自动化部署及 Webhook 触发器配置",
+      "tech_stack": [
+        "Next.js",
+        "React"
+      ],
+      "concepts": [
+        "Graph-Theory",
+        "Information-Architecture"
+      ],
+      "related_nodes": [
+        {
+          "id": "english-learning-assistant"
+        }
+      ]
+    },
+    {
+      "id": "speech-emotion-recognition",
+      "title": "语音情感识别研究 (SER)",
+      "type": "optimize_for",
+      "status": "completed",
+      "ai_involvement": 80,
+      "motivation": "现有 SER 模型在跨语料库评估时泛化能力极差，且缺乏在消费级显卡（RTX 4090）上的轻量化训练基准。",
+      "purpose": "探索低时延音频特征提取方案，构建一个高准确率且可用于实时语音交互的轻量化情感分类引擎。",
+      "content": "# 语音情感识别研究 (SER)\n\n语音情感识别（Speech Emotion Recognition, SER）是人机交互（HCI）领域中至关重要的一环。本项目旨在通过声学特征工程与轻量级深度学习模型的结合，在低延迟下实现高准确率的实时语音情感分类。\n\n## 核心技术实现\n\n1. **音频特征提取**：利用 `Librosa` 提取梅尔频率倒谱系数（MFCCs）、声谱质心（Spectral Centroid）以及色度特征（Chromagram）。\n2. **轻量化神经网络**：在 `PyTorch` 中构建了一套 CNN-BiLSTM 融合架构，仅需约 1.2M 参数，极大提升了推理速度。\n3. **优化基准**：专门针对单张 RTX 4090 显卡进行轻量化训练和推理优化，使得单次推断延迟降低至 12ms 以内。\n\n## 项目里程碑\n\n- [x] 跨语料库（RAVDESS & IEMOCAP）特征归一化管道搭建\n- [x] 轻量级 CNN-BiLSTM 架构设计与消融实验\n- [x] 实时麦克风输入情感分类 Demo 实现",
+      "tech_stack": [
+        "Python",
+        "PyTorch",
+        "Librosa"
+      ],
+      "concepts": [
+        "Signal-Processing",
+        "Deep-Learning"
+      ],
+      "related_nodes": [
+        {
+          "id": "english-learning-assistant"
+        }
+      ]
+    },
+    {
+      "id": "Python",
+      "title": "Python",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: Python",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 Python 技术栈的自动生成描述。可在本地 Vault 创建 `Python.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "PyTorch",
+      "title": "PyTorch",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: PyTorch",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 PyTorch 技术栈的自动生成描述。可在本地 Vault 创建 `PyTorch.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Next.js",
+      "title": "Next.js",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: Next.js",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 Next.js 技术栈的自动生成描述。可在本地 Vault 创建 `Next.js.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "NLP",
+      "title": "NLP",
+      "type": "concept",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "理论概念领域: NLP",
+      "purpose": "指导项目设计与技术选型的宏观理论基础。",
+      "content": "关于 NLP 概念领域的自动生成描述。可在本地 Vault 创建 `NLP.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Deep-Learning",
+      "title": "Deep-Learning",
+      "type": "concept",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "理论概念领域: Deep-Learning",
+      "purpose": "指导项目设计与技术选型的宏观理论基础。",
+      "content": "关于 Deep-Learning 概念领域的自动生成描述。可在本地 Vault 创建 `Deep-Learning.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "React",
+      "title": "React",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: React",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 React 技术栈的自动生成描述。可在本地 Vault 创建 `React.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Graph-Theory",
+      "title": "Graph-Theory",
+      "type": "concept",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "理论概念领域: Graph-Theory",
+      "purpose": "指导项目设计与技术选型的宏观理论基础。",
+      "content": "关于 Graph-Theory 概念领域的自动生成描述。可在本地 Vault 创建 `Graph-Theory.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Information-Architecture",
+      "title": "Information-Architecture",
+      "type": "concept",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "理论概念领域: Information-Architecture",
+      "purpose": "指导项目设计与技术选型的宏观理论基础。",
+      "content": "关于 Information-Architecture 概念领域的自动生成描述。可在本地 Vault 创建 `Information-Architecture.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Librosa",
+      "title": "Librosa",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: Librosa",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 Librosa 技术栈的自动生成描述。可在本地 Vault 创建 `Librosa.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Signal-Processing",
+      "title": "Signal-Processing",
+      "type": "concept",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "理论概念领域: Signal-Processing",
+      "purpose": "指导项目设计与技术选型的宏观理论基础。",
+      "content": "关于 Signal-Processing 概念领域的自动生成描述。可在本地 Vault 创建 `Signal-Processing.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    }
+  ],
+  "links": [
+    {
+      "source": "english-learning-assistant",
+      "target": "Python",
+      "type": "implements"
+    },
+    {
+      "source": "english-learning-assistant",
+      "target": "PyTorch",
+      "type": "implements"
+    },
+    {
+      "source": "english-learning-assistant",
+      "target": "Next.js",
+      "type": "implements"
+    },
+    {
+      "source": "english-learning-assistant",
+      "target": "NLP",
+      "type": "belongs_to"
+    },
+    {
+      "source": "english-learning-assistant",
+      "target": "Deep-Learning",
+      "type": "belongs_to"
+    },
+    {
+      "source": "english-learning-assistant",
+      "target": "speech-emotion-recognition",
+      "type": "inspired_by"
+    },
+    {
+      "source": "neural-map",
+      "target": "Next.js",
+      "type": "implements"
+    },
+    {
+      "source": "neural-map",
+      "target": "React",
+      "type": "implements"
+    },
+    {
+      "source": "neural-map",
+      "target": "Graph-Theory",
+      "type": "belongs_to"
+    },
+    {
+      "source": "neural-map",
+      "target": "Information-Architecture",
+      "type": "belongs_to"
+    },
+    {
+      "source": "neural-map",
+      "target": "english-learning-assistant",
+      "type": "inspired_by"
+    },
+    {
+      "source": "speech-emotion-recognition",
+      "target": "Python",
+      "type": "implements"
+    },
+    {
+      "source": "speech-emotion-recognition",
+      "target": "PyTorch",
+      "type": "implements"
+    },
+    {
+      "source": "speech-emotion-recognition",
+      "target": "Librosa",
+      "type": "implements"
+    },
+    {
+      "source": "speech-emotion-recognition",
+      "target": "Signal-Processing",
+      "type": "belongs_to"
+    },
+    {
+      "source": "speech-emotion-recognition",
+      "target": "Deep-Learning",
+      "type": "belongs_to"
+    },
+    {
+      "source": "speech-emotion-recognition",
+      "target": "english-learning-assistant",
+      "type": "inspired_by"
+    }
+  ]
+}
