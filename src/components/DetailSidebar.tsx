@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Briefcase, 
   Terminal, 
@@ -35,6 +35,7 @@ interface DetailSidebarProps {
   onClose: () => void;
   onSelectNodeById: (id: string) => void;
   lang: "zh" | "en";
+  allNodes: NodeData[];
 }
 
 export default function DetailSidebar({
@@ -42,9 +43,136 @@ export default function DetailSidebar({
   onClose,
   onSelectNodeById,
   lang,
+  allNodes,
 }: DetailSidebarProps) {
   const [activeTab, setActiveTab] = useState<"info" | "tech" | "links">("info");
   const isZh = lang === "zh";
+
+  useEffect(() => {
+    setActiveTab("info");
+  }, [selectedNode?.id]);
+
+  // Helper to look up a node's display title in the current language
+  const getNodeDisplayTitle = (nodeId: string) => {
+    if (!nodeId) return "";
+    const targetNode = allNodes.find(n => n.id.toLowerCase() === nodeId.toLowerCase());
+    if (!targetNode) return nodeId; // Fallback to raw ID
+    
+    return isZh 
+      ? (targetNode.title_zh || targetNode.title || targetNode.id) 
+      : (targetNode.title_en || targetNode.title || targetNode.id);
+  };
+
+  const parseMarkdownToReact = (text: string) => {
+    if (!text) return null;
+    
+    const lines = text.split("\n");
+    let inList = false;
+    const listItems: React.ReactNode[] = [];
+    const elements: React.ReactNode[] = [];
+
+    const parseInline = (inlineText: string): React.ReactNode[] => {
+      const parts: React.ReactNode[] = [];
+      const regex = /(\*\*.*?\*\*|\[.*?\]\(.*?\))/g;
+      let match;
+      let lastIndex = 0;
+      
+      while ((match = regex.exec(inlineText)) !== null) {
+        const matchIndex = match.index;
+        if (matchIndex > lastIndex) {
+          parts.push(inlineText.substring(lastIndex, matchIndex));
+        }
+        
+        const token = match[0];
+        if (token.startsWith("**") && token.endsWith("**")) {
+          parts.push(
+            <strong key={matchIndex} style={{ color: "var(--text-primary)", fontWeight: 700 }}>
+              {token.slice(2, -2)}
+            </strong>
+          );
+        } else if (token.startsWith("[") && token.includes("](")) {
+          const closeBracket = token.indexOf("]");
+          const label = token.slice(1, closeBracket);
+          const url = token.slice(closeBracket + 2, -1);
+          parts.push(
+            <a 
+              key={matchIndex} 
+              href={url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={{ color: "var(--color-primary)", textDecoration: "underline" }}
+            >
+              {label}
+            </a>
+          );
+        }
+        lastIndex = regex.lastIndex;
+      }
+      
+      if (lastIndex < inlineText.length) {
+        parts.push(inlineText.substring(lastIndex));
+      }
+      
+      return parts.length > 0 ? parts : [inlineText];
+    };
+
+    lines.forEach((line, index) => {
+      const trimmed = line.trim();
+      
+      if (trimmed.startsWith("###")) {
+        if (inList) {
+          elements.push(<ul key={`ul-${index}`} style={{ margin: "6px 0", paddingLeft: "20px" }}>{[...listItems]}</ul>);
+          listItems.length = 0;
+          inList = false;
+        }
+        elements.push(
+          <h4 key={index} style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "12px", marginBottom: "6px" }}>
+            {parseInline(trimmed.substring(3).trim())}
+          </h4>
+        );
+      } else if (trimmed.startsWith("##")) {
+        if (inList) {
+          elements.push(<ul key={`ul-${index}`} style={{ margin: "6px 0", paddingLeft: "20px" }}>{[...listItems]}</ul>);
+          listItems.length = 0;
+          inList = false;
+        }
+        elements.push(
+          <h3 key={index} style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-primary)", marginTop: "16px", marginBottom: "8px" }}>
+            {parseInline(trimmed.substring(2).trim())}
+          </h3>
+        );
+      } else if (trimmed.startsWith("-") || trimmed.startsWith("*")) {
+        inList = true;
+        listItems.push(
+          <li key={`li-${index}`} style={{ margin: "4px 0", color: "var(--text-secondary)", listStyleType: "disc" }}>
+            {parseInline(trimmed.substring(1).trim())}
+          </li>
+        );
+      } else {
+        if (inList) {
+          elements.push(<ul key={`ul-${index}`} style={{ margin: "6px 0", paddingLeft: "20px" }}>{[...listItems]}</ul>);
+          listItems.length = 0;
+          inList = false;
+        }
+        
+        if (trimmed === "") {
+          elements.push(<div key={`spacer-${index}`} style={{ height: "8px" }} />);
+        } else {
+          elements.push(
+            <p key={index} style={{ margin: "4px 0", lineHeight: "1.5" }}>
+              {parseInline(trimmed)}
+            </p>
+          );
+        }
+      }
+    });
+
+    if (inList && listItems.length > 0) {
+      elements.push(<ul key="ul-end" style={{ margin: "6px 0", paddingLeft: "20px" }}>{[...listItems]}</ul>);
+    }
+
+    return <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>{elements}</div>;
+  };
 
   const getStatusText = (status: string) => {
     if (isZh) {
@@ -158,7 +286,7 @@ export default function DetailSidebar({
     // we can translate specific default phrases or let it display the content.
     // For PyTorch, NetworkX, Neo4j, NLP, Knowledge Graph - we can translate the content dynamically:
     if (!isZh) {
-      const normId = selectedNode.id.toLowerCase();
+      const normId = (selectedNode?.id || "").toLowerCase();
       if (normId === "graphmind") {
         return "The core brain of the entire personal digital garden, responsible for building and exploring knowledge graphs.\n\n### Core Features\n- **Dynamic Ingestion**: Parse Markdown files, codebases, research papers, and web links.\n- **Relation Extraction**: Extract entity triples automatically using NLP and deep learning NER.\n- **Interactive Topology**: Explore thoughts in a 2D/3D force-directed canvas.";
       }
@@ -299,9 +427,9 @@ export default function DetailSidebar({
               {selectedNode.content && (
                 <div className="detail-section">
                   <span className="detail-section-title">{labels.descTitle}</span>
-                  <p className="detail-purpose-text" style={{ whiteSpace: "pre-line", fontSize: "0.82rem", color: "var(--text-secondary)" }}>
-                    {renderDescription()}
-                  </p>
+                  <div className="detail-purpose-text" style={{ fontSize: "0.82rem", color: "var(--text-secondary)" }}>
+                    {parseMarkdownToReact(renderDescription())}
+                  </div>
                 </div>
               )}
             </div>
@@ -323,7 +451,7 @@ export default function DetailSidebar({
                         <div className="tech-badge-icon">
                           <Terminal size={14} style={{ color: "var(--color-green)" }} />
                         </div>
-                        <span className="tech-badge-label">{tech}</span>
+                        <span className="tech-badge-label">{getNodeDisplayTitle(tech)}</span>
                       </div>
                     ))}
                   </div>
@@ -350,7 +478,7 @@ export default function DetailSidebar({
                         <div className="tech-badge-icon">
                           <Cpu size={14} style={{ color: "var(--color-purple)" }} />
                         </div>
-                        <span className="tech-badge-label" style={{ color: "var(--text-primary)" }}>{concept}</span>
+                        <span className="tech-badge-label" style={{ color: "var(--text-primary)" }}>{getNodeDisplayTitle(concept)}</span>
                       </div>
                     ))}
                   </div>
@@ -373,7 +501,7 @@ export default function DetailSidebar({
                         className="related-link-item"
                       >
                         <div className="related-link-left">
-                          <span className="related-link-name">{rel.id}</span>
+                          <span className="related-link-name">{getNodeDisplayTitle(rel.id)}</span>
                           <span className={`related-link-type-badge ${getRelationClass(rel.type)}`}>
                             {getRelationTypeText(rel.type)}
                           </span>

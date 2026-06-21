@@ -276,31 +276,6 @@
       "related_nodes": []
     },
     {
-      "id": "ELA",
-      "title": "ELA",
-      "title_zh": "or",
-      "title_en": "or",
-      "type": "project",
-      "status": "in-progress",
-      "ai_involvement": 50,
-      "motivation": "",
-      "motivation_zh": "This is a Next.js project bootstrapped with createnextapp.",
-      "motivation_en": "This is a Next.js project bootstrapped with createnextapp.",
-      "purpose": "",
-      "purpose_zh": "First, run the development server:",
-      "purpose_en": "First, run the development server:",
-      "content": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).\n\n## Getting Started\n\nFirst, run the development server:\n\n```bash\nnpm run dev\n# or\nyarn dev\n# or\npnpm dev\n# or\nbun dev\n```\n\nOpen [http://localhost:3000](http://localhost:3000) with your browser to see the result.\n\nYou can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.\n\nThis project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.\n\n## Learn More\n\nTo learn more about Next.js, take a look at the following resources:\n\n- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.\n- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.\n\nYou can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!\n\n## Deploy on Vercel\n\nThe easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.\n\nCheck out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.\n",
-      "tech_stack": [
-        "JavaScript",
-        "TypeScript",
-        "React",
-        "Next.js",
-        "Tailwind CSS"
-      ],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
       "id": "PyTorch",
       "title": "PyTorch",
       "type": "tech",
@@ -361,71 +336,6 @@
       "motivation": "技术栈组件: Neo4j",
       "purpose": "作为项目开发的核心技术支撑。",
       "content": "关于 Neo4j 技术栈的自动生成描述。可在本地 Vault 创建 `Neo4j.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "JavaScript",
-      "title": "JavaScript",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: JavaScript",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 JavaScript 技术栈的自动生成描述。可在本地 Vault 创建 `JavaScript.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "TypeScript",
-      "title": "TypeScript",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: TypeScript",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 TypeScript 技术栈的自动生成描述。可在本地 Vault 创建 `TypeScript.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "React",
-      "title": "React",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: React",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 React 技术栈的自动生成描述。可在本地 Vault 创建 `React.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "Next.js",
-      "title": "Next.js",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: Next.js",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 Next.js 技术栈的自动生成描述。可在本地 Vault 创建 `Next.js.md` 自定义此节点。",
-      "tech_stack": [],
-      "concepts": [],
-      "related_nodes": []
-    },
-    {
-      "id": "Tailwind CSS",
-      "title": "Tailwind CSS",
-      "type": "tech",
-      "status": "completed",
-      "ai_involvement": 0,
-      "motivation": "技术栈组件: Tailwind CSS",
-      "purpose": "作为项目开发的核心技术支撑。",
-      "content": "关于 Tailwind CSS 技术栈的自动生成描述。可在本地 Vault 创建 `Tailwind CSS.md` 自定义此节点。",
       "tech_stack": [],
       "concepts": [],
       "related_nodes": []
@@ -581,31 +491,6 @@
       "source": "text2kg",
       "target": "graphmind",
       "type": "belongs_to"
-    },
-    {
-      "source": "ELA",
-      "target": "JavaScript",
-      "type": "implements"
-    },
-    {
-      "source": "ELA",
-      "target": "TypeScript",
-      "type": "implements"
-    },
-    {
-      "source": "ELA",
-      "target": "React",
-      "type": "implements"
-    },
-    {
-      "source": "ELA",
-      "target": "Next.js",
-      "type": "implements"
-    },
-    {
-      "source": "ELA",
-      "target": "Tailwind CSS",
-      "type": "implements"
     }
   ]
 }

@@ -87,7 +87,7 @@ const drawNodeIconSymbol = (
   cx: number, 
   cy: number
 ) => {
-  const normId = id.toLowerCase();
+  const normId = (id || "").toLowerCase();
   
   if (normId.includes("python")) {
     // Python dual snakes logo representation
@@ -515,9 +515,9 @@ export default function Home() {
     if (searchQuery.trim() === "") return [];
     const query = searchQuery.toLowerCase();
     return graphData.nodes.filter(node => {
-      const matchZh = node.title_zh?.toLowerCase().includes(query) || node.title.toLowerCase().includes(query);
+      const matchZh = node.title_zh?.toLowerCase().includes(query) || (node.title || "").toLowerCase().includes(query);
       const matchEn = node.title_en?.toLowerCase().includes(query);
-      const matchId = node.id.toLowerCase().includes(query);
+      const matchId = (node.id || "").toLowerCase().includes(query);
       return matchZh || matchEn || matchId;
     }).slice(0, 5);
   }, [graphData.nodes, searchQuery]);
@@ -596,10 +596,21 @@ export default function Home() {
   // Handles camera focusing on search/selection
   const handleSelectNodeById = (nodeId: string) => {
     const node = graphData.nodes.find(
-      (n) => n.id.toLowerCase() === nodeId.toLowerCase() || n.title.toLowerCase() === nodeId.toLowerCase()
+      (n) => (n.id || "").toLowerCase() === (nodeId || "").toLowerCase() || (n.title || "").toLowerCase() === (nodeId || "").toLowerCase()
     );
     if (node && fgRef.current) {
       setSelectedNode(node);
+      
+      // Auto-enable categories and AI filters so the node becomes visible!
+      if (node.type === "project" && node.ai_involvement < aiFilterVal) {
+        setAiFilterVal(0);
+      }
+      if (!categoryFilters[node.type as keyof typeof categoryFilters]) {
+        setCategoryFilters((prev) => ({
+          ...prev,
+          [node.type]: true
+        }));
+      }
       
       // Center camera and zoom in smoothly
       setTimeout(() => {
@@ -648,14 +659,14 @@ export default function Home() {
     
     // Search Query highlighting logic (preserving layout topology)
     const matchesSearch = searchQuery.trim() === "" || 
-      node.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (node.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.title_zh?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.title_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      node.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (node.id || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.motivation?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.motivation_zh?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.motivation_en?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      node.tech_stack?.some((t: string) => t.toLowerCase().includes(searchQuery.toLowerCase()));
+      node.tech_stack?.some((t: string) => (t || "").toLowerCase().includes(searchQuery.toLowerCase()));
 
     ctx.save();
     ctx.globalAlpha = isHighlighted && matchesSearch ? 1.0 : 0.12;
@@ -772,8 +783,49 @@ export default function Home() {
     // Label colors
     ctx.fillStyle = isSelected ? categoryColor : (isDarkMode ? "#f3f4f6" : "#1e293b");
     
-    // Main Title
-    ctx.fillText(titleVal, node.x, node.y + r + 5);
+    // Word wrapping logic
+    const maxLineLength = 18;
+    const lines: string[] = [];
+    if (titleVal.length > maxLineLength) {
+      // Split into two lines
+      const mid = Math.ceil(titleVal.length / 2);
+      let splitIdx = -1;
+      const separators = ['-', '_', ' ', '/'];
+      for (let i = 0; i < mid; i++) {
+        if (separators.includes(titleVal[mid - i])) {
+          splitIdx = mid - i;
+          break;
+        }
+        if (separators.includes(titleVal[mid + i])) {
+          splitIdx = mid + i;
+          break;
+        }
+      }
+      
+      if (splitIdx !== -1) {
+        lines.push(titleVal.substring(0, splitIdx + 1));
+        let second = titleVal.substring(splitIdx + 1);
+        if (second.length > 15) {
+          second = second.substring(0, 13) + "...";
+        }
+        lines.push(second);
+      } else {
+        lines.push(titleVal.substring(0, 14) + "-");
+        let second = titleVal.substring(14);
+        if (second.length > 15) {
+          second = second.substring(0, 13) + "...";
+        }
+        lines.push(second);
+      }
+    } else {
+      lines.push(titleVal);
+    }
+
+    // Render title lines
+    const currentY = node.y + r + 5;
+    lines.forEach((line, idx) => {
+      ctx.fillText(line, node.x, currentY + idx * (fontSize + 1.5));
+    });
 
     // Category / AI Involvement Subtitle
     let subtitle = "";
@@ -787,7 +839,8 @@ export default function Home() {
     
     ctx.font = `500 ${fontSize * 0.8}px sans-serif`;
     ctx.fillStyle = isSelected ? categoryColor : (isDarkMode ? "#6b7280" : "#64748b");
-    ctx.fillText(subtitle, node.x, node.y + r + 5 + fontSize + 1);
+    const subtitleY = currentY + lines.length * (fontSize + 1.5);
+    ctx.fillText(subtitle, node.x, subtitleY);
 
     ctx.restore();
   };
@@ -798,16 +851,16 @@ export default function Home() {
     const targetId = typeof link.target === "object" ? link.target.id : link.target;
     
     const isHighlighted = !isFocusMode || 
-                         (highlightedNodeIds.has(sourceId) && highlightedNodeIds.has(targetId));
+                         ((sourceId && highlightedNodeIds.has(sourceId)) && (targetId && highlightedNodeIds.has(targetId)));
 
     // Dynamic search dimming for relationships
     const sourceNode = graphData.nodes.find(n => n.id === sourceId);
     const targetNode = graphData.nodes.find(n => n.id === targetId);
     const matchesSearch = searchQuery.trim() === "" || 
-      sourceId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (sourceNode && sourceNode.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      targetId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (targetNode && targetNode.title.toLowerCase().includes(searchQuery.toLowerCase()));
+      (sourceId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (sourceNode && (sourceNode.title || "").toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (targetId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (targetNode && (targetNode.title || "").toLowerCase().includes(searchQuery.toLowerCase()));
 
     if (!isHighlighted || !matchesSearch) return isDarkMode ? "rgba(255, 255, 255, 0.02)" : "rgba(0, 0, 0, 0.02)";
 
@@ -1332,6 +1385,7 @@ export default function Home() {
               onClose={() => setSelectedNode(null)}
               onSelectNodeById={handleSelectNodeById}
               lang={lang}
+              allNodes={graphData.nodes}
             />
           </aside>
 
