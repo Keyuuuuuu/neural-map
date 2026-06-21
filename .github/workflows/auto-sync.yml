@@ -1,0 +1,51 @@
+name: Auto Sync Graph Data
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  repository_dispatch:
+    types: [sync_graph]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run graph data compiler
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/build-graph.js
+
+      - name: Verify Next.js build
+        run: npm run build
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add public/data/graph.json
+          if git diff --staged --quiet; then
+            echo "No changes in graph data."
+          else
+            git commit -m "chore: auto-sync graph data [skip ci]"
+            git push origin main
+          fi

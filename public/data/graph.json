@@ -5,7 +5,7 @@
       "title": "DiffGraph",
       "title_en": "DiffGraph",
       "title_zh": "DiffGraph",
-      "type": "belongs_to",
+      "type": "project",
       "status": "idea",
       "ai_involvement": 65,
       "motivation": "大型图谱在节点频繁增删时计算成本高昂，传统的静态重构方法缺乏实时局部演化更新的能力。",
@@ -24,7 +24,8 @@
       ],
       "related_nodes": [
         {
-          "id": "graphmind"
+          "id": "graphmind",
+          "type": "belongs_to"
         }
       ],
       "content": "# DiffGraph\n\n图神经网络实验项目，专注于增量图结构的表示学习研究。\n\n## 特性\n\n- **增量式 GNN 更新**：避免重新计算整个图谱的 Embeddings，仅对增量/变更部分实施消息传递。\n- **时间演化分析**：捕获图谱随时间推移发生的连接强度变化。"
@@ -34,7 +35,7 @@
       "title": "GraphMind",
       "title_en": "GraphMind",
       "title_zh": "GraphMind",
-      "type": "optimize_for",
+      "type": "project",
       "status": "completed",
       "ai_involvement": 92,
       "motivation": "在信息爆炸的时代，构建个人知识图谱，让知识连接产生更大的价值。",
@@ -55,7 +56,16 @@
       ],
       "related_nodes": [
         {
-          "id": "graphrag"
+          "id": "graphrag",
+          "type": "implements"
+        },
+        {
+          "id": "text2kg",
+          "type": "inspired_by"
+        },
+        {
+          "id": "mindflow",
+          "type": "optimize_for"
         }
       ],
       "content": "# GraphMind\n\n知识图谱构建工具，是整个个人数字花园的核心大脑。\n\n## 核心功能\n\n- **动态知识摄入**：支持解析 Markdown 笔记、代码库、学术文献及网页链接。\n- **语义链接构建**：利用自然语言处理算法自动抽取实体与关系，生成结构化的图谱拓扑。\n- **高维可视化**：提供 2D/3D 力导向图，方便直观检索个人思想的关联网络。"
@@ -65,7 +75,7 @@
       "title": "GraphRAG",
       "title_en": "GraphRAG",
       "title_zh": "GraphRAG",
-      "type": "belongs_to",
+      "type": "project",
       "status": "in-progress",
       "ai_involvement": 90,
       "motivation": "大语言模型面对长文本推理和复杂关系多跳查询时存在幻觉，且对特定私有知识的感知十分微弱。",
@@ -85,7 +95,8 @@
       ],
       "related_nodes": [
         {
-          "id": "graphmind"
+          "id": "graphmind",
+          "type": "belongs_to"
         }
       ],
       "content": "# GraphRAG\n\n基于知识图谱的检索增强生成项目，将 LLM 与结构化图形的全局/局部关系融合。\n\n## 功能\n\n- **全局社区提取**：通过 Graphmind 提取出的社区摘要进行高层次事实生成。\n- **实体感知召回**：基于密集检索 and 稀疏图游走，精准捕获多跳关联的上下文。"
@@ -114,7 +125,7 @@
       "title": "MindFlow",
       "title_en": "MindFlow",
       "title_zh": "MindFlow",
-      "type": "belongs_to",
+      "type": "project",
       "status": "completed",
       "ai_involvement": 78,
       "motivation": "思维脑图和散落的随笔通常是静态且孤立的，难以随着个人知识库的成长而自我进化。",
@@ -132,7 +143,8 @@
       ],
       "related_nodes": [
         {
-          "id": "graphmind"
+          "id": "graphmind",
+          "type": "belongs_to"
         }
       ],
       "content": "# MindFlow\n\n思维可视化工具，专注于辅助创作者捕获并映射灵感碎片，实现可视化笔记组织。\n\n## 特性\n\n- **实时语义映射**：书写过程中自动高亮关联关键词。\n- **力导向画布排版**：以物理引擎的排斥和吸引力模型优雅布局知识点。"
@@ -218,7 +230,7 @@
       "title": "Text2KG",
       "title_en": "Text2KG",
       "title_zh": "Text2KG",
-      "type": "belongs_to",
+      "type": "project",
       "status": "completed",
       "ai_involvement": 85,
       "motivation": "非结构化文本占到所有数据源的80%以上，对其进行人工关系建模耗时且无法扩展。",
@@ -238,7 +250,8 @@
       ],
       "related_nodes": [
         {
-          "id": "graphmind"
+          "id": "graphmind",
+          "type": "belongs_to"
         }
       ],
       "content": "# Text2KG\n\n实体抽取项目，作为知识图谱构建的底层基础管道，负责从非结构化文本中全自动抽取高精度实体与语义三元组。\n\n## 特性\n\n- **多模式实体识别**：基于微调的深度学习模型提取人名、机构、地名及自定义专业术语。\n- **关系分类器**：自动判断实体对之间的依赖、继承或关联强度。"
@@ -333,7 +346,7 @@
     {
       "source": "diffgraph",
       "target": "graphmind",
-      "type": "inspired_by"
+      "type": "belongs_to"
     },
     {
       "source": "graphmind",
@@ -368,7 +381,17 @@
     {
       "source": "graphmind",
       "target": "graphrag",
+      "type": "implements"
+    },
+    {
+      "source": "graphmind",
+      "target": "text2kg",
       "type": "inspired_by"
+    },
+    {
+      "source": "graphmind",
+      "target": "mindflow",
+      "type": "optimize_for"
     },
     {
       "source": "graphrag",
@@ -398,7 +421,7 @@
     {
       "source": "graphrag",
       "target": "graphmind",
-      "type": "inspired_by"
+      "type": "belongs_to"
     },
     {
       "source": "mindflow",
@@ -418,7 +441,7 @@
     {
       "source": "mindflow",
       "target": "graphmind",
-      "type": "inspired_by"
+      "type": "belongs_to"
     },
     {
       "source": "text2kg",
@@ -448,7 +471,7 @@
     {
       "source": "text2kg",
       "target": "graphmind",
-      "type": "inspired_by"
+      "type": "belongs_to"
     }
   ]
 }
