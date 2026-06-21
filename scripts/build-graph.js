@@ -370,15 +370,23 @@ async function run() {
     'Accept': 'application/vnd.github+json'
   };
   
+  let reposUrl = `https://api.github.com/users/${githubUser}/repos?per_page=100`;
+
   if (process.env.GITHUB_TOKEN) {
     headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
     console.log('🌐 GITHUB_TOKEN detected. Performing authenticated requests.');
+
+    // If authenticated user matches the targeted user, scan both public and private repos
+    const userProfile = await getJson('https://api.github.com/user', headers);
+    if (userProfile && userProfile.login.toLowerCase() === githubUser.toLowerCase()) {
+      reposUrl = 'https://api.github.com/user/repos?per_page=100';
+      console.log('🔒 Target user matches authenticated user. Scanning public and private repositories.');
+    }
   } else {
     console.log('ℹ️ GITHUB_TOKEN not set. Performing unauthenticated requests (lower rate limit).');
   }
 
   console.log(`🌐 Scanning GitHub repositories for user: "${githubUser}" with topic: "${targetTopic}"`);
-  const reposUrl = `https://api.github.com/users/${githubUser}/repos?per_page=100`;
   const repos = await getJson(reposUrl, headers);
   
   if (repos && Array.isArray(repos)) {

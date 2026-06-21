@@ -257,6 +257,50 @@
       "content": "# Text2KG\n\n实体抽取项目，作为知识图谱构建的底层基础管道，负责从非结构化文本中全自动抽取高精度实体与语义三元组。\n\n## 特性\n\n- **多模式实体识别**：基于微调的深度学习模型提取人名、机构、地名及自定义专业术语。\n- **关系分类器**：自动判断实体对之间的依赖、继承或关联强度。"
     },
     {
+      "id": "AI-in-web-applicaton",
+      "title": "AI-in-web-applicaton",
+      "title_zh": "📘 Facial Expression Recognition System",
+      "title_en": "📘 Facial Expression Recognition System",
+      "type": "project",
+      "status": "in-progress",
+      "ai_involvement": 50,
+      "motivation": "",
+      "motivation_zh": "🧠 Project Introduction",
+      "motivation_en": "🧠 Project Introduction",
+      "purpose": "",
+      "purpose_zh": "This project is a facial expression recognition system based on deep learning, combining ResNet, FPN, and Transformer architectures to achieve highaccuracy emotion recognition. The system provides an ",
+      "purpose_en": "This project is a facial expression recognition system based on deep learning, combining ResNet, FPN, and Transformer architectures to achieve highaccuracy emotion recognition. The system provides an ",
+      "content": "# 📘 Facial Expression Recognition System\n\n## 🧠 Project Introduction\n\nThis project is a facial expression recognition system based on deep learning, combining ResNet, FPN, and Transformer architectures to achieve high-accuracy emotion recognition. The system provides an interactive web interface supporting image upload analysis, real-time webcam recognition, and 3D neural network visualization. It's suitable for emotion analysis, human-computer interaction, and other application scenarios.\n\n## 🗂️ Project Structure\n\n```\n├── fer2013_ResNet-FPN-Transformer/   # Best performing hybrid model\n│   ├── final_complete_model/         # Saved model\n│   ├── confusion_matrix.png          # Confusion matrix\n│   └── training_curves.png           # Training curves\n├── fer2013_ResNet-ViT/               # ResNet-ViT hybrid model\n│   ├── final_model_no_fpn/           # Saved model\n│   └── confusion_matrix_no_fpn.png   # Confusion matrix\n├── fer2013_ResNet50/                 # Baseline ResNet50 model\n│   ├── 20250323-215041/              # Training results\n│   │   ├── tensorboard_logs/         # TensorBoard logs\n│   │   ├── best_model.h5             # Best model\n│   │   ├── confusion_matrix.png      # Confusion matrix\n│   │   └── training_curves.png       # Training curves\n│   └── resnet50.py                   # Model definition script\n├── web/                              # Web application\n│   ├── css/                          # Stylesheets\n│   │   ├── featureMap.css            # Feature map visualization styles\n│   │   ├── networkVis.css            # Network visualization styles\n│   │   └── style.css                 # Main stylesheet\n│   ├── js/                           # JavaScript files\n│   │   ├── featureMap.js             # Feature map visualization\n│   │   ├── main.js                   # Main application logic\n│   │   └── resnetVis.js              # 3D network visualization\n│   ├── tfjs_model/                   # Converted TensorFlow.js model\n│   ├── tfjs-tfjs-v4.22.0/            # TensorFlow.js library\n│   └── index.html                    # Main HTML file\n├── LICENSE                           # License file\n└── README.md                         # Project documentation\n```\n\n## 🧰 Technology Stack\n\n| Component       | Technologies                         |\n|-----------------|--------------------------------------|\n| Model Training  | Python, TensorFlow/Keras             |\n| Dataset         | FER-2013                             |\n| Frontend UI     | HTML, CSS, JavaScript                |\n| Real-time Recognition | TensorFlow.js, WebRTC          |\n| 3D Visualization| Three.js                             |\n| Chart Display   | Chart.js                             |\n\n## 😃 Supported Expression Categories\n\n| Label | Expression Name |\n|-------|----------------|\n| 0     | Angry          |\n| 1     | Disgust        |\n| 2     | Fear           |\n| 3     | Happy          |\n| 4     | Sad            |\n| 5     | Surprise       |\n| 6     | Neutral        |\n\n## 📊 Model Performance\n\n| Model                      | Accuracy | Precision | Recall | F1   | Training Time |\n|---------------------------|----------|-----------|--------|------|---------------|\n| ResNet50                  | 78.94%   | 0.78      | 0.79   | 0.78 | 25 minutes    |\n| ResNet-ViT                | 80.45%   | 0.75      | 0.67   | 0.70 | 35 minutes    |\n| ResNet+FPN+Transformer    | 80.65%   | 0.78      | 0.68   | 0.72 | 42 minutes    |\n\nThe ResNet+FPN+Transformer hybrid model combines:\n- ResNet backbone for local feature extraction\n- Feature Pyramid Network (FPN) for multi-scale feature representation\n- Transformer encoder for capturing global relationships\n\n## 🚀 Quick Start\n\n### 1️⃣ Clone the Project\n\n```bash\ngit clone https://github.com/Keyuuuuuu/AI-in-web-applicaton.git\ncd AI-in-web-applicaton\n```\n\n### 2️⃣ Run the Web Application\n\n#### Method 1: Direct Opening\nOpen the index.html file in the web directory\n\n#### Method 2: Using a Local Server\n```bash\ncd web\n# Python 3\npython -m http.server 8000\n# or Python 2\npython -m SimpleHTTPServer 8000\n```\n\nThen open `http://localhost:8000` in your browser\n\n### 3️⃣ Using the Application\n\n1. **Image Mode**:\n   - Click \"Choose File\" to upload an image\n   - View the predicted emotion, confidence scores, and feature map visualization\n\n2. **Camera Mode**:\n   - Click \"Start Camera\" to activate your webcam\n   - View real-time emotion predictions as your expressions change\n\n3. **Network Structure**:\n   - Explore the 3D visualization of the neural network\n   - Interact with nodes to see details about each layer\n\n## ✨ Feature Visualization\n\nThe system provides unique neural network visualization capabilities:\n- Feature map animations: Show how the model \"sees\" facial expressions at different layers\n- 3D network visualization: Displays the model structure in an interactive three-dimensional way\n- Confidence charts: Presents prediction probabilities for emotion categories through dynamic charts\n\n\n## 🌐 Real-time Recognition Demo\n\nThe web application uses WebRTC for camera access and TensorFlow.js for model inference. The system adopts a client-side processing strategy, ensuring all facial image analysis is done in the user's browser, enhancing privacy protection.\n\n\n## 📝 Acknowledgments\n\n- Dr. Kovásznai Gergely (Supervisor)\n- Eszterházy Károly Catholic University, Faculty of Informatics\n- The creators of the FER-2013 dataset\n\n## 📞 Contact\n\n- Hu Ming - mitntghu@gmail.com\n- Project Link: https://github.com/Keyuuuuuu/AI-in-web-applicaton\n",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "ELA",
+      "title": "ELA",
+      "title_zh": "or",
+      "title_en": "or",
+      "type": "project",
+      "status": "in-progress",
+      "ai_involvement": 50,
+      "motivation": "",
+      "motivation_zh": "This is a Next.js project bootstrapped with createnextapp.",
+      "motivation_en": "This is a Next.js project bootstrapped with createnextapp.",
+      "purpose": "",
+      "purpose_zh": "First, run the development server:",
+      "purpose_en": "First, run the development server:",
+      "content": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).\n\n## Getting Started\n\nFirst, run the development server:\n\n```bash\nnpm run dev\n# or\nyarn dev\n# or\npnpm dev\n# or\nbun dev\n```\n\nOpen [http://localhost:3000](http://localhost:3000) with your browser to see the result.\n\nYou can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.\n\nThis project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.\n\n## Learn More\n\nTo learn more about Next.js, take a look at the following resources:\n\n- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.\n- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.\n\nYou can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!\n\n## Deploy on Vercel\n\nThe easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.\n\nCheck out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.\n",
+      "tech_stack": [
+        "JavaScript",
+        "TypeScript",
+        "React",
+        "Next.js",
+        "Tailwind CSS"
+      ],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
       "id": "PyTorch",
       "title": "PyTorch",
       "type": "tech",
@@ -317,6 +361,71 @@
       "motivation": "技术栈组件: Neo4j",
       "purpose": "作为项目开发的核心技术支撑。",
       "content": "关于 Neo4j 技术栈的自动生成描述。可在本地 Vault 创建 `Neo4j.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "JavaScript",
+      "title": "JavaScript",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: JavaScript",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 JavaScript 技术栈的自动生成描述。可在本地 Vault 创建 `JavaScript.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "TypeScript",
+      "title": "TypeScript",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: TypeScript",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 TypeScript 技术栈的自动生成描述。可在本地 Vault 创建 `TypeScript.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "React",
+      "title": "React",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: React",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 React 技术栈的自动生成描述。可在本地 Vault 创建 `React.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Next.js",
+      "title": "Next.js",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: Next.js",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 Next.js 技术栈的自动生成描述。可在本地 Vault 创建 `Next.js.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Tailwind CSS",
+      "title": "Tailwind CSS",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: Tailwind CSS",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 Tailwind CSS 技术栈的自动生成描述。可在本地 Vault 创建 `Tailwind CSS.md` 自定义此节点。",
       "tech_stack": [],
       "concepts": [],
       "related_nodes": []
@@ -472,6 +581,31 @@
       "source": "text2kg",
       "target": "graphmind",
       "type": "belongs_to"
+    },
+    {
+      "source": "ELA",
+      "target": "JavaScript",
+      "type": "implements"
+    },
+    {
+      "source": "ELA",
+      "target": "TypeScript",
+      "type": "implements"
+    },
+    {
+      "source": "ELA",
+      "target": "React",
+      "type": "implements"
+    },
+    {
+      "source": "ELA",
+      "target": "Next.js",
+      "type": "implements"
+    },
+    {
+      "source": "ELA",
+      "target": "Tailwind CSS",
+      "type": "implements"
     }
   ]
 }
