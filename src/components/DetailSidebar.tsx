@@ -36,6 +36,7 @@ interface DetailSidebarProps {
   onSelectNodeById: (id: string) => void;
   lang: "zh" | "en";
   allNodes: NodeData[];
+  activeSidebarTab: string;
 }
 
 export default function DetailSidebar({
@@ -44,6 +45,7 @@ export default function DetailSidebar({
   onSelectNodeById,
   lang,
   allNodes,
+  activeSidebarTab,
 }: DetailSidebarProps) {
   const [activeTab, setActiveTab] = useState<"info" | "tech" | "links">("info");
   const isZh = lang === "zh";
@@ -257,11 +259,14 @@ export default function DetailSidebar({
     associatedConcepts: isZh ? "涉及理论概念 / Concepts" : "Associated Concepts",
     relatedNodesTitle: isZh ? "拓扑关联节点 / Related Nodes" : "Topology Related Nodes",
     noTech: isZh ? "此节点本身属于技术栈或无关联的技术栈组件。" : "This node itself is a technology component or has no associated stack.",
-    noLinks: isZh ? "此节点目前无特定方向的向外拓扑关系。" : "This node currently has no outward topological relationships.",
+    noLinks: isZh ? "此节点目前无特定方向 of 向外拓扑关系。" : "This node currently has no outward topological relationships.",
     focusBtn: isZh ? "聚焦探索节点" : "Focus Explore Node",
     emptyStateText: isZh 
       ? "在星图网络中点击任意项目、技术栈或理论节点，即可在此处查看其设计动机、AI参与度以及多跳关联 spec。"
-      : "Click any project, technology, or concept node in the network to view its motivation, AI involvement, and multi-hop specifications here."
+      : "Click any project, technology, or concept node in the network to view its motivation, AI involvement, and multi-hop specifications here.",
+    listProjects: isZh ? "项目列表" : "Projects List",
+    listTech: isZh ? "技术栈列表" : "Technologies List",
+    listConcepts: isZh ? "知识概念列表" : "Concepts List"
   };
 
   // Resolve bilingual content values
@@ -530,15 +535,90 @@ export default function DetailSidebar({
           </button>
         </div>
       ) : (
-        <div className="detail-card" style={{ padding: 0 }}>
-          <div className="empty-detail-state">
-            <div className="empty-detail-icon-box">
-              <Compass size={24} style={{ animation: "spin 12s linear infinite" }} />
+        <div className="detail-card" style={{ padding: activeSidebarTab === "network" ? 0 : "24px 16px" }}>
+          {activeSidebarTab === "network" ? (
+            <div className="empty-detail-state">
+              <div className="empty-detail-icon-box">
+                <Compass size={24} style={{ animation: "spin 12s linear infinite" }} />
+              </div>
+              <p className="empty-detail-text">
+                {labels.emptyStateText}
+              </p>
             </div>
-            <p className="empty-detail-text">
-              {labels.emptyStateText}
-            </p>
-          </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", height: "100%", overflow: "hidden" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid var(--border-card)", paddingBottom: "12px" }}>
+                {activeSidebarTab === "projects" ? (
+                  <>
+                    <Briefcase size={18} style={{ color: "var(--color-primary)" }} />
+                    <span style={{ fontSize: "1rem", fontWeight: 700 }}>{labels.listProjects}</span>
+                  </>
+                ) : activeSidebarTab === "technologies" ? (
+                  <>
+                    <Terminal size={18} style={{ color: "var(--color-green)" }} />
+                    <span style={{ fontSize: "1rem", fontWeight: 700 }}>{labels.listTech}</span>
+                  </>
+                ) : (
+                  <>
+                    <Cpu size={18} style={{ color: "var(--color-purple)" }} />
+                    <span style={{ fontSize: "1rem", fontWeight: 700 }}>{labels.listConcepts}</span>
+                  </>
+                )}
+              </div>
+              
+              <div className="sidebar-list-scroll" style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "10px", paddingRight: "4px" }}>
+                {allNodes
+                  .filter(node => {
+                    if (activeSidebarTab === "projects") return node.type === "project";
+                    if (activeSidebarTab === "technologies") return node.type === "tech";
+                    if (activeSidebarTab === "concepts") return node.type === "concept";
+                    return false;
+                  })
+                  .map(node => {
+                    const nodeTitle = isZh
+                      ? (node.title_zh || node.title || node.id)
+                      : (node.title_en || node.title || node.id);
+                    const nodeMotivation = isZh
+                      ? (node.motivation_zh || node.motivation || "")
+                      : (node.motivation_en || node.motivation || "");
+                    
+                    return (
+                      <div 
+                        key={node.id}
+                        onClick={() => onSelectNodeById(node.id)}
+                        className="sidebar-list-item-card"
+                        style={{
+                          padding: "12px",
+                          borderRadius: "10px",
+                          border: "1px solid var(--border-card)",
+                          background: "var(--bg-card)",
+                          cursor: "pointer",
+                          transition: "all 0.2s",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "6px"
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <span style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--text-primary)" }}>{nodeTitle}</span>
+                          {node.type === "project" && (
+                            <span style={{ fontSize: "0.72rem", color: "var(--color-primary)", fontWeight: 500 }}>
+                              {node.ai_involvement}% AI
+                            </span>
+                          )}
+                        </div>
+                        {nodeMotivation && (
+                          <span style={{ fontSize: "0.78rem", color: "var(--text-secondary)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {nodeMotivation}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })
+                }
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

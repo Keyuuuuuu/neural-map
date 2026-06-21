@@ -1386,6 +1386,7 @@ export default function Home() {
               onSelectNodeById={handleSelectNodeById}
               lang={lang}
               allNodes={graphData.nodes}
+              activeSidebarTab={activeSidebarTab}
             />
           </aside>
 

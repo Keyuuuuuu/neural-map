@@ -1095,6 +1095,21 @@ input[type="checkbox"]:checked + .checkbox-custom::after {
   gap: 12px;
 }
 
+.sidebar-list-item-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-list-item-card:hover {
+  border-color: var(--border-card-hover) !important;
+  background: var(--bg-card-hover) !important;
+  transform: translateY(-1.5px);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-list-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
 .tech-badge-card {
   display: flex;
   flex-direction: column;
