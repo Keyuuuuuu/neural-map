@@ -123,9 +123,68 @@ async function getText(url, headers) {
 }
 
 // AI Summarization using Gemini API
+function truncateToSentence(text, limit) {
+  if (!text) return '';
+  if (text.length <= limit) return text;
+  
+  const sub = text.substring(0, limit);
+  const lastPeriod = Math.max(
+    sub.lastIndexOf('.'),
+    sub.lastIndexOf('。'),
+    sub.lastIndexOf('?'),
+    sub.lastIndexOf('？'),
+    sub.lastIndexOf('!'),
+    sub.lastIndexOf('！'),
+    sub.lastIndexOf(';')
+  );
+  
+  if (lastPeriod > limit * 0.4) {
+    return sub.substring(0, lastPeriod + 1);
+  }
+  return sub.trim() + '...';
+}
+
+function detectTechStackFromReadme(readmeText) {
+  const stack = new Set();
+  if (!readmeText) return [];
+  const text = readmeText.toLowerCase();
+  
+  if (text.includes("react")) stack.add("React");
+  if (text.includes("next.js") || text.includes("nextjs")) stack.add("Next.js");
+  if (text.includes("vue")) stack.add("Vue");
+  if (text.includes("tailwind")) stack.add("Tailwind CSS");
+  if (text.includes("three.js") || text.includes("threejs")) stack.add("Three.js");
+  if (text.includes("d3.js") || text.includes("d3js")) stack.add("D3.js");
+  if (text.includes("tensorflow.js") || text.includes("tfjs")) stack.add("TensorFlow.js");
+  if (text.includes("tensorflow") || text.includes("keras")) stack.add("TensorFlow");
+  if (text.includes("pytorch") || text.includes("torch")) stack.add("PyTorch");
+  if (text.includes("python")) stack.add("Python");
+  if (text.includes("javascript") || text.includes(" js ")) stack.add("JavaScript");
+  if (text.includes("typescript") || text.includes(" ts ")) stack.add("TypeScript");
+  if (text.includes("rust")) stack.add("Rust");
+  if (text.includes("golang") || text.includes(" go ")) stack.add("Go");
+  if (text.includes("neo4j")) stack.add("Neo4j");
+  if (text.includes("networkx")) stack.add("NetworkX");
+  if (text.includes("spacy") || text.includes("nltk") || text.includes("transformers") || text.includes("nlp")) stack.add("NLP");
+  if (text.includes("html")) stack.add("HTML");
+  if (text.includes("css")) stack.add("CSS");
+  
+  return Array.from(stack);
+}
+
+function findCaseInsensitiveKey(map, key) {
+  const lowerKey = key.toLowerCase();
+  for (const k of map.keys()) {
+    if (k.toLowerCase() === lowerKey) {
+      return k;
+    }
+  }
+  return null;
+}
+
 async function extractMetadataWithAI(readmeText, apiKey) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-  const prompt = `You are a knowledge graph builder. Analyze the following project README.md text and extract the 'motivation' (why the project was created / what problem it solves) and 'purpose' (what it accomplishes / its core goals) in both Chinese and English. Also extract the project's title in Chinese and English.
+  const prompt = `You are a knowledge graph builder. Analyze the following project README.md text and extract the 'motivation' (why the project was created / what problem it solves), 'purpose' (what it accomplishes / its core goals) in both Chinese and English. Also extract the project's title in Chinese and English, and any referenced 'tech_stack' (technologies like React, Tailwind CSS, Python, PyTorch, Neo4j, JavaScript, TypeScript, Three.js, etc.) and 'concepts'.
 Return ONLY a valid JSON object matching this schema:
 {
   "title_zh": "...",
@@ -134,6 +193,7 @@ Return ONLY a valid JSON object matching this schema:
   "motivation_en": "...",
   "purpose_zh": "...",
   "purpose_en": "...",
+  "tech_stack": ["..."],
   "concepts": ["..."]
 }
 Do not wrap the response in markdown code blocks or add any other text besides the JSON.
@@ -224,25 +284,27 @@ function extractMetadataRegex(readmeText, id) {
   }
 
   if (motivationSection) {
-    const cleaned = cleanMarkdown(motivationSection).substring(0, 300);
-    result.motivation_zh = cleaned;
-    result.motivation_en = cleaned;
+    const cleaned = cleanMarkdown(motivationSection);
+    result.motivation_zh = truncateToSentence(cleaned, 300);
+    result.motivation_en = truncateToSentence(cleaned, 300);
   }
   if (purposeSection) {
-    const cleaned = cleanMarkdown(purposeSection).substring(0, 300);
-    result.purpose_zh = cleaned;
-    result.purpose_en = cleaned;
+    const cleaned = cleanMarkdown(purposeSection);
+    result.purpose_zh = truncateToSentence(cleaned, 300);
+    result.purpose_en = truncateToSentence(cleaned, 300);
   }
 
   if (!result.motivation_zh && !result.purpose_zh) {
     const paragraphs = cleanText.split(/\n\s*\n/).map(p => cleanMarkdown(p)).filter(p => p.length > 20);
     if (paragraphs[0]) {
-      result.motivation_zh = paragraphs[0].substring(0, 200);
-      result.motivation_en = paragraphs[0].substring(0, 200);
+      const cleaned = paragraphs[0];
+      result.motivation_zh = truncateToSentence(cleaned, 200);
+      result.motivation_en = truncateToSentence(cleaned, 200);
     }
     if (paragraphs[1]) {
-      result.purpose_zh = paragraphs[1].substring(0, 200);
-      result.purpose_en = paragraphs[1].substring(0, 200);
+      const cleaned = paragraphs[1];
+      result.purpose_zh = truncateToSentence(cleaned, 200);
+      result.purpose_en = truncateToSentence(cleaned, 200);
     }
   }
 
@@ -410,12 +472,29 @@ async function run() {
       
       // Fetch package manifests to detect tech stack
       const rawBaseUrl = `https://raw.githubusercontent.com/${owner}/${repo.name}/${defaultBranch}`;
-      const packageJsonText = await getText(`${rawBaseUrl}/package.json`, headers);
-      const requirementsTxtText = await getText(`${rawBaseUrl}/requirements.txt`, headers);
-      const cargoTomlText = await getText(`${rawBaseUrl}/Cargo.toml`, headers);
-      const goModText = await getText(`${rawBaseUrl}/go.mod`, headers);
+      let packageJsonText = await getText(`${rawBaseUrl}/package.json`, headers);
+      let requirementsTxtText = await getText(`${rawBaseUrl}/requirements.txt`, headers);
+      let cargoTomlText = await getText(`${rawBaseUrl}/Cargo.toml`, headers);
+      let goModText = await getText(`${rawBaseUrl}/go.mod`, headers);
       
-      const autoTechStack = detectTechStack(packageJsonText, requirementsTxtText, cargoTomlText, goModText);
+      let autoTechStack = detectTechStack(packageJsonText, requirementsTxtText, cargoTomlText, goModText);
+      
+      // Check common subdirectories
+      const subdirs = ['web', 'frontend', 'backend', 'src', 'server', 'client'];
+      for (const subdir of subdirs) {
+        const pj = await getText(`${rawBaseUrl}/${subdir}/package.json`, headers);
+        const req = await getText(`${rawBaseUrl}/${subdir}/requirements.txt`, headers);
+        const cargo = await getText(`${rawBaseUrl}/${subdir}/Cargo.toml`, headers);
+        const go = await getText(`${rawBaseUrl}/${subdir}/go.mod`, headers);
+        if (pj || req || cargo || go) {
+          const subTech = detectTechStack(pj, req, cargo, go);
+          autoTechStack = Array.from(new Set([...autoTechStack, ...subTech]));
+        }
+      }
+      
+      // Auto detect from README keywords as a backup/supplement
+      const readmeTechStack = detectTechStackFromReadme(readmeText);
+      autoTechStack = Array.from(new Set([...autoTechStack, ...readmeTechStack]));
       
       // Parse README metadata
       let parsed = { data: {}, content: readmeText };
@@ -434,6 +513,7 @@ async function run() {
       let purposeZh = metadata.purpose_zh || '';
       let purposeEn = metadata.purpose_en || '';
       let conceptsVal = metadata.concepts || [];
+      let techStackVal = metadata.tech_stack || [];
       
       // If Motivation/Purpose is missing and Gemini API Key is available, call AI
       if ((!motivationVal && !motivationZh) && process.env.GEMINI_API_KEY && readmeText) {
@@ -447,6 +527,7 @@ async function run() {
           purposeZh = aiMetadata.purpose_zh || purposeZh;
           purposeEn = aiMetadata.purpose_en || purposeEn;
           conceptsVal = Array.from(new Set([...conceptsVal, ...(aiMetadata.concepts || [])]));
+          techStackVal = Array.from(new Set([...techStackVal, ...(aiMetadata.tech_stack || [])]));
         }
       }
       
@@ -478,18 +559,20 @@ async function run() {
         purpose_zh: purposeZh || purposeVal,
         purpose_en: purposeEn || purposeVal,
         content: parsed.content || `### Description\nThis project is synced from GitHub: [${repo.name}](${repo.html_url})`,
-        tech_stack: Array.from(new Set([...(metadata.tech_stack || []), ...autoTechStack])),
+        tech_stack: Array.from(new Set([...techStackVal, ...autoTechStack])),
         concepts: conceptsVal,
         related_nodes: metadata.related_nodes || []
       };
       
       // Merge with local nodes if duplicates occur (local takes precedence)
-      if (nodesMap.has(repo.name)) {
-        console.log(`ℹ️ Node "${repo.name}" already exists locally. Merging and using local override precedence.`);
-        const localNode = nodesMap.get(repo.name);
-        nodesMap.set(repo.name, {
+      let matchedRepoKey = findCaseInsensitiveKey(nodesMap, repo.name);
+      if (matchedRepoKey) {
+        console.log(`ℹ️ Node "${repo.name}" already exists locally (matched as "${matchedRepoKey}"). Merging and using local override precedence.`);
+        const localNode = nodesMap.get(matchedRepoKey);
+        nodesMap.set(matchedRepoKey, {
           ...node,
           ...localNode,
+          id: matchedRepoKey, // Preserve local key casing
           tech_stack: Array.from(new Set([...node.tech_stack, ...(localNode.tech_stack || [])])),
           concepts: Array.from(new Set([...node.concepts, ...(localNode.concepts || [])]))
         });
@@ -505,8 +588,12 @@ async function run() {
   for (const [id, node] of nodesMap.entries()) {
     // Check tech stack references
     if (node.tech_stack) {
+      const resolvedTechStack = [];
       for (const tech of node.tech_stack) {
-        if (!nodesMap.has(tech) && !implicitNodes.has(tech)) {
+        let matchedKey = findCaseInsensitiveKey(nodesMap, tech) || findCaseInsensitiveKey(implicitNodes, tech);
+        const targetId = matchedKey || tech;
+        
+        if (!matchedKey) {
           implicitNodes.set(tech, {
             id: tech,
             title: tech,
@@ -522,19 +609,25 @@ async function run() {
           });
         }
         
+        resolvedTechStack.push(targetId);
         // Link project -> tech (implements)
         links.push({
           source: id,
-          target: tech,
+          target: targetId,
           type: 'implements'
         });
       }
+      node.tech_stack = Array.from(new Set(resolvedTechStack));
     }
     
     // Check concepts references
     if (node.concepts) {
+      const resolvedConcepts = [];
       for (const concept of node.concepts) {
-        if (!nodesMap.has(concept) && !implicitNodes.has(concept)) {
+        let matchedKey = findCaseInsensitiveKey(nodesMap, concept) || findCaseInsensitiveKey(implicitNodes, concept);
+        const targetId = matchedKey || concept;
+        
+        if (!matchedKey) {
           implicitNodes.set(concept, {
             id: concept,
             title: concept,
@@ -550,23 +643,27 @@ async function run() {
           });
         }
         
+        resolvedConcepts.push(targetId);
         // Link project -> concept (belongs_to)
         links.push({
           source: id,
-          target: concept,
+          target: targetId,
           type: 'belongs_to'
         });
       }
+      node.concepts = Array.from(new Set(resolvedConcepts));
     }
     
     // Check custom related nodes
     if (node.related_nodes) {
       for (const relation of node.related_nodes) {
         if (relation && relation.id) {
+          let matchedKey = findCaseInsensitiveKey(nodesMap, relation.id) || findCaseInsensitiveKey(implicitNodes, relation.id);
+          const targetId = matchedKey || relation.id;
           // Link project -> related project
           links.push({
             source: id,
-            target: relation.id,
+            target: targetId,
             type: relation.type || 'inspired_by'
           });
         }
@@ -584,10 +681,11 @@ async function run() {
     if (node.type === 'tech') {
       if (node.concepts) {
         for (const concept of node.concepts) {
-          if (nodesMap.has(concept)) {
+          let matchedKey = findCaseInsensitiveKey(nodesMap, concept);
+          if (matchedKey) {
             links.push({
               source: id,
-              target: concept,
+              target: matchedKey,
               type: 'belongs_to'
             });
           }
