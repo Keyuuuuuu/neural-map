@@ -259,19 +259,27 @@
     {
       "id": "AI-in-web-applicaton",
       "title": "AI-in-web-applicaton",
-      "title_zh": "AI-in-web-applicaton",
-      "title_en": "AI-in-web-applicaton",
+      "title_zh": "📘 Facial Expression Recognition System",
+      "title_en": "📘 Facial Expression Recognition System",
       "type": "project",
       "status": "in-progress",
       "ai_involvement": 50,
       "motivation": "",
-      "motivation_zh": "",
-      "motivation_en": "",
+      "motivation_zh": "🧠 Project Introduction",
+      "motivation_en": "🧠 Project Introduction",
       "purpose": "",
-      "purpose_zh": "",
-      "purpose_en": "",
-      "content": "### Description\nThis project is synced from GitHub: [AI-in-web-applicaton](https://github.com/Keyuuuuuu/AI-in-web-applicaton)",
-      "tech_stack": [],
+      "purpose_zh": "This project is a facial expression recognition system based on deep learning, combining ResNet, FPN, and Transformer architectures to achieve highaccuracy emotion recognition.",
+      "purpose_en": "This project is a facial expression recognition system based on deep learning, combining ResNet, FPN, and Transformer architectures to achieve highaccuracy emotion recognition.",
+      "content": "# 📘 Facial Expression Recognition System\n\n## 🧠 Project Introduction\n\nThis project is a facial expression recognition system based on deep learning, combining ResNet, FPN, and Transformer architectures to achieve high-accuracy emotion recognition. The system provides an interactive web interface supporting image upload analysis, real-time webcam recognition, and 3D neural network visualization. It's suitable for emotion analysis, human-computer interaction, and other application scenarios.\n\n## 🗂️ Project Structure\n\n```\n├── fer2013_ResNet-FPN-Transformer/   # Best performing hybrid model\n│   ├── final_complete_model/         # Saved model\n│   ├── confusion_matrix.png          # Confusion matrix\n│   └── training_curves.png           # Training curves\n├── fer2013_ResNet-ViT/               # ResNet-ViT hybrid model\n│   ├── final_model_no_fpn/           # Saved model\n│   └── confusion_matrix_no_fpn.png   # Confusion matrix\n├── fer2013_ResNet50/                 # Baseline ResNet50 model\n│   ├── 20250323-215041/              # Training results\n│   │   ├── tensorboard_logs/         # TensorBoard logs\n│   │   ├── best_model.h5             # Best model\n│   │   ├── confusion_matrix.png      # Confusion matrix\n│   │   └── training_curves.png       # Training curves\n│   └── resnet50.py                   # Model definition script\n├── web/                              # Web application\n│   ├── css/                          # Stylesheets\n│   │   ├── featureMap.css            # Feature map visualization styles\n│   │   ├── networkVis.css            # Network visualization styles\n│   │   └── style.css                 # Main stylesheet\n│   ├── js/                           # JavaScript files\n│   │   ├── featureMap.js             # Feature map visualization\n│   │   ├── main.js                   # Main application logic\n│   │   └── resnetVis.js              # 3D network visualization\n│   ├── tfjs_model/                   # Converted TensorFlow.js model\n│   ├── tfjs-tfjs-v4.22.0/            # TensorFlow.js library\n│   └── index.html                    # Main HTML file\n├── LICENSE                           # License file\n└── README.md                         # Project documentation\n```\n\n## 🧰 Technology Stack\n\n| Component       | Technologies                         |\n|-----------------|--------------------------------------|\n| Model Training  | Python, TensorFlow/Keras             |\n| Dataset         | FER-2013                             |\n| Frontend UI     | HTML, CSS, JavaScript                |\n| Real-time Recognition | TensorFlow.js, WebRTC          |\n| 3D Visualization| Three.js                             |\n| Chart Display   | Chart.js                             |\n\n## 😃 Supported Expression Categories\n\n| Label | Expression Name |\n|-------|----------------|\n| 0     | Angry          |\n| 1     | Disgust        |\n| 2     | Fear           |\n| 3     | Happy          |\n| 4     | Sad            |\n| 5     | Surprise       |\n| 6     | Neutral        |\n\n## 📊 Model Performance\n\n| Model                      | Accuracy | Precision | Recall | F1   | Training Time |\n|---------------------------|----------|-----------|--------|------|---------------|\n| ResNet50                  | 78.94%   | 0.78      | 0.79   | 0.78 | 25 minutes    |\n| ResNet-ViT                | 80.45%   | 0.75      | 0.67   | 0.70 | 35 minutes    |\n| ResNet+FPN+Transformer    | 80.65%   | 0.78      | 0.68   | 0.72 | 42 minutes    |\n\nThe ResNet+FPN+Transformer hybrid model combines:\n- ResNet backbone for local feature extraction\n- Feature Pyramid Network (FPN) for multi-scale feature representation\n- Transformer encoder for capturing global relationships\n\n## 🚀 Quick Start\n\n### 1️⃣ Clone the Project\n\n```bash\ngit clone https://github.com/Keyuuuuuu/AI-in-web-applicaton.git\ncd AI-in-web-applicaton\n```\n\n### 2️⃣ Run the Web Application\n\n#### Method 1: Direct Opening\nOpen the index.html file in the web directory\n\n#### Method 2: Using a Local Server\n```bash\ncd web\n# Python 3\npython -m http.server 8000\n# or Python 2\npython -m SimpleHTTPServer 8000\n```\n\nThen open `http://localhost:8000` in your browser\n\n### 3️⃣ Using the Application\n\n1. **Image Mode**:\n   - Click \"Choose File\" to upload an image\n   - View the predicted emotion, confidence scores, and feature map visualization\n\n2. **Camera Mode**:\n   - Click \"Start Camera\" to activate your webcam\n   - View real-time emotion predictions as your expressions change\n\n3. **Network Structure**:\n   - Explore the 3D visualization of the neural network\n   - Interact with nodes to see details about each layer\n\n## ✨ Feature Visualization\n\nThe system provides unique neural network visualization capabilities:\n- Feature map animations: Show how the model \"sees\" facial expressions at different layers\n- 3D network visualization: Displays the model structure in an interactive three-dimensional way\n- Confidence charts: Presents prediction probabilities for emotion categories through dynamic charts\n\n\n## 🌐 Real-time Recognition Demo\n\nThe web application uses WebRTC for camera access and TensorFlow.js for model inference. The system adopts a client-side processing strategy, ensuring all facial image analysis is done in the user's browser, enhancing privacy protection.\n\n\n## 📝 Acknowledgments\n\n- Dr. Kovásznai Gergely (Supervisor)\n- Eszterházy Károly Catholic University, Faculty of Informatics\n- The creators of the FER-2013 dataset\n\n## 📞 Contact\n\n- Hu Ming - mitntghu@gmail.com\n- Project Link: https://github.com/Keyuuuuuu/AI-in-web-applicaton\n",
+      "tech_stack": [
+        "Three.js",
+        "TensorFlow.js",
+        "TensorFlow",
+        "Python",
+        "JavaScript",
+        "HTML",
+        "CSS"
+      ],
       "concepts": [],
       "related_nodes": []
     },
@@ -284,6 +292,84 @@
       "motivation": "技术栈组件: Python",
       "purpose": "作为项目开发的核心技术支撑。",
       "content": "关于 Python 技术栈的自动生成描述。可在本地 Vault 创建 `Python.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "Three.js",
+      "title": "Three.js",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: Three.js",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 Three.js 技术栈的自动生成描述。可在本地 Vault 创建 `Three.js.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "TensorFlow.js",
+      "title": "TensorFlow.js",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: TensorFlow.js",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 TensorFlow.js 技术栈的自动生成描述。可在本地 Vault 创建 `TensorFlow.js.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "TensorFlow",
+      "title": "TensorFlow",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: TensorFlow",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 TensorFlow 技术栈的自动生成描述。可在本地 Vault 创建 `TensorFlow.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "JavaScript",
+      "title": "JavaScript",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: JavaScript",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 JavaScript 技术栈的自动生成描述。可在本地 Vault 创建 `JavaScript.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "HTML",
+      "title": "HTML",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: HTML",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 HTML 技术栈的自动生成描述。可在本地 Vault 创建 `HTML.md` 自定义此节点。",
+      "tech_stack": [],
+      "concepts": [],
+      "related_nodes": []
+    },
+    {
+      "id": "CSS",
+      "title": "CSS",
+      "type": "tech",
+      "status": "completed",
+      "ai_involvement": 0,
+      "motivation": "技术栈组件: CSS",
+      "purpose": "作为项目开发的核心技术支撑。",
+      "content": "关于 CSS 技术栈的自动生成描述。可在本地 Vault 创建 `CSS.md` 自定义此节点。",
       "tech_stack": [],
       "concepts": [],
       "related_nodes": []
@@ -439,6 +525,41 @@
       "source": "text2kg",
       "target": "graphmind",
       "type": "belongs_to"
+    },
+    {
+      "source": "AI-in-web-applicaton",
+      "target": "Three.js",
+      "type": "implements"
+    },
+    {
+      "source": "AI-in-web-applicaton",
+      "target": "TensorFlow.js",
+      "type": "implements"
+    },
+    {
+      "source": "AI-in-web-applicaton",
+      "target": "TensorFlow",
+      "type": "implements"
+    },
+    {
+      "source": "AI-in-web-applicaton",
+      "target": "Python",
+      "type": "implements"
+    },
+    {
+      "source": "AI-in-web-applicaton",
+      "target": "JavaScript",
+      "type": "implements"
+    },
+    {
+      "source": "AI-in-web-applicaton",
+      "target": "HTML",
+      "type": "implements"
+    },
+    {
+      "source": "AI-in-web-applicaton",
+      "target": "CSS",
+      "type": "implements"
     }
   ]
 }
